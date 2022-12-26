@@ -18,6 +18,7 @@ class ViewController: UIViewController {
     
     let menuVC = MenuViewController()
     let homeVC = HomeViewController()
+    var navVC: UINavigationController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +42,7 @@ class ViewController: UIViewController {
         addChild(navVC)
         view.addSubview(navVC.view)
         navVC.didMove(toParent: self)
+        self.navVC = navVC
         
     }
 
@@ -50,21 +52,32 @@ class ViewController: UIViewController {
 extension ViewController: HomeViewControllerDelegate {
     func didTapMenuButton() {
         // Animate menu
+        let menuWidth = self.homeVC.view.frame.size.width/2
         switch menuState{
         case .closed:
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut) {
                     
+                self.homeVC.view.frame.origin.x = menuWidth
                 
-                self.homeVC.view.frame.origin.x = self.homeVC.view.frame.size.width - 100
-                
-            } completion : { done in
+                self.homeVC.navigationItem.leftBarButtonItem?.image = UIImage(systemName: "line.horizontal.3.circle.fill")
+
+            } completion : { [weak self] done in
                 if done {
-                    
+                    self?.menuState = .opened
                 }
             }
         case .opened:
-            
-            break
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut) {
+                
+                self.homeVC.view.frame.origin.x = 0
+                
+                self.homeVC.navigationItem.leftBarButtonItem?.image = UIImage(systemName: "line.horizontal.3.circle")
+                
+            } completion : { [weak self] done in
+                if done {
+                    self?.menuState = .closed
+                }
+            }
             
         }
     }
