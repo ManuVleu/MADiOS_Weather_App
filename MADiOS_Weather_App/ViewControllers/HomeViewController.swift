@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Foundation
 
 protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
@@ -22,7 +23,29 @@ class HomeViewController: UIViewController {
         view.backgroundColor = .systemBackground
         title = "Home"
         
+        //MenuButton
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3.circle"), style: .done, target: self, action: #selector(didTapMenuButton))
+        
+        //welcomeLabel that adapts to the time of day
+        let welcomeLabel = UILabel()
+        welcomeLabel.text = "Initiele waarde"
+        welcomeLabel.textAlignment = .center
+        view.addSubview(welcomeLabel)
+        welcomeLabel.translatesAutoresizingMaskIntoConstraints = false
+        welcomeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        welcomeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8).isActive = true
+        
+        let currentDate = Date()
+        let calender = Calender.current
+        let hour = calender.component(.hour,from: currentDate)
+        if hour >= 5 && hour < 12 {
+            welcomeLabel.text = "Goedenmorgen"
+        } else if hour >= 12 && hour < 18 {
+            welcomeLabel.text = "Goedenmiddag"
+        } else {
+            welcomeLabel.text = "Goedenavond"
+        }
+        
     }
     
     // line.horizontal.3.circle

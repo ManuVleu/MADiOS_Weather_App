@@ -24,7 +24,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        title = "Hellow world"
         view.backgroundColor = .systemBlue
         navigationController?.navigationBar.prefersLargeTitles = true
         
@@ -89,22 +88,25 @@ extension ViewController: HomeViewControllerDelegate {
                 }
             }
             
-        }    }
+        }
+        
+    }
     
 }
 
 extension ViewController: MenuViewControllerDelegate {
     
     func didSelect(menuItem: MenuViewController.MenuOptions) {
+        print("Geselecteerd")
         toggleMenu(completion: nil)
             switch menuItem {
             case .home:
-                self.resetToHome()
+                resetToHome()
             case .locations:
                 break
             case .info:
                 // Add info child
-                self.addInfo()
+                addInfo()
                 
         }
     }

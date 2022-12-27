@@ -60,6 +60,7 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        //runs once in beginning
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = MenuOptions.allCases[indexPath.row].rawValue// Get string value from the enum
         cell.textLabel?.textColor = .white
@@ -70,12 +71,11 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
         return cell
     }
     
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)// unhighlight bij deselect
         let item = MenuOptions.allCases[indexPath.row]
-        print("bruh\(item)")
         delegate?.didSelect(menuItem: item)
-        
     }
 
 }
