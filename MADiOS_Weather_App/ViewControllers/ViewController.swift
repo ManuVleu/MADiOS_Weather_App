@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     let menuVC = MenuViewController()
     let homeVC = HomeViewController()
     var navVC: UINavigationController?
+    lazy var infoVC = InfoViewController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +33,7 @@ class ViewController: UIViewController {
     
     private func addChildVCs() {
         // Menu
+        menuVC.delegate = self
         addChild(menuVC)
         view.addSubview(menuVC.view)
         menuVC.didMove(toParent: self)
@@ -51,8 +53,12 @@ class ViewController: UIViewController {
 
 extension ViewController: HomeViewControllerDelegate {
     func didTapMenuButton() {
+        toggleMenu(completion: nil)
+    }
+    
+    func toggleMenu(completion: (() -> Void)?) {
         // Animate menu
-        let menuWidth = self.homeVC.view.frame.size.width/2
+        let menuWidth = 180.0
         switch menuState{
         case .closed:
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut) {
@@ -76,9 +82,46 @@ extension ViewController: HomeViewControllerDelegate {
             } completion : { [weak self] done in
                 if done {
                     self?.menuState = .closed
+                    DispatchQueue.main.async {
+                        completion?()
+                    }
+                    
                 }
             }
             
+        }    }
+    
+}
+
+extension ViewController: MenuViewControllerDelegate {
+    
+    func didSelect(menuItem: MenuViewController.MenuOptions) {
+        toggleMenu(completion: nil)
+            switch menuItem {
+            case .home:
+                self.resetToHome()
+            case .locations:
+                break
+            case .info:
+                // Add info child
+                self.addInfo()
+                
         }
+    }
+    
+    func resetToHome() {
+        infoVC.view.removeFromSuperview()
+        infoVC.didMove(toParent: nil)
+        homeVC.title = "Home"
+    }
+    
+    func addInfo() {
+        let vc = infoVC
+        homeVC.addChild(vc)
+        homeVC.view.addSubview(vc.view)
+        vc.view.frame = view.frame
+        vc.didMove(toParent: homeVC)
+        homeVC.title = vc.title
+        
     }
 }

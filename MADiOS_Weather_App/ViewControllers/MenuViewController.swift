@@ -7,24 +7,27 @@
 
 import UIKit
 
+protocol MenuViewControllerDelegate: AnyObject {
+    func didSelect(menuItem: MenuViewController.MenuOptions)
+}
+
 class MenuViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    weak var delegate: MenuViewControllerDelegate?
     
     enum MenuOptions: String, CaseIterable {
         case home = "Home"
-        case settings = "Your Locations"
+        case locations = "Your Locations"
         case info = "Info"
-        case share = "Share"
         
         var imageName: String {
             switch self {
             case .home:
                 return "house"
-            case .settings:
-                return "cogg"
+            case .locations:
+                return "map"
             case .info:
                 return "note"
-            case .share:
-                return "share"
             }
         }
     }
@@ -48,7 +51,7 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        tableView.frame = CGRect(x: 0,y: view.safeAreaInsets.top, width: view.bounds.size.width, height: view.bounds.size.height)
+        tableView.frame = CGRect(x: 0,y: view.safeAreaInsets.top+50, width: view.bounds.size.width, height: view.bounds.size.height)
     }
     
     // Table
@@ -59,6 +62,9 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = MenuOptions.allCases[indexPath.row].rawValue// Get string value from the enum
+        cell.textLabel?.textColor = .white
+        cell.imageView?.image = UIImage(systemName: MenuOptions.allCases[indexPath.row].imageName)
+        cell.imageView?.tintColor = .white
         cell.backgroundColor = greyColor
         cell.contentView.backgroundColor = greyColor
         return cell
@@ -66,6 +72,10 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)// unhighlight bij deselect
+        let item = MenuOptions.allCases[indexPath.row]
+        print("bruh\(item)")
+        delegate?.didSelect(menuItem: item)
+        
     }
 
 }
