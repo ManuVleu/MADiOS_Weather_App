@@ -15,6 +15,9 @@ protocol HomeViewControllerDelegate: AnyObject {
 class HomeViewController: UIViewController {
     
     weak var delegate: HomeViewControllerDelegate?
+    
+    let welcomeLabel = UILabel()
+    let searchBar = UISearchBar()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,17 +30,34 @@ class HomeViewController: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3.circle"), style: .done, target: self, action: #selector(didTapMenuButton))
         
         //welcomeLabel that adapts to the time of day
-        let welcomeLabel = UILabel()
-        welcomeLabel.text = "Initiele waarde"
+        setupWelcomeLabel()
+        
+        //searchBar voor cities
+        setupSearchBar()
+        
+        
+    }
+    
+    func setupSearchBar() {
+        view.addSubview(searchBar)
+        
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        searchBar.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 8).isActive = true
+        
+        searchBar.layer.cornerRadius = 10
+        
+    }
+    
+    func setupWelcomeLabel() {
         welcomeLabel.textAlignment = .center
         view.addSubview(welcomeLabel)
         welcomeLabel.translatesAutoresizingMaskIntoConstraints = false
         welcomeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         welcomeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8).isActive = true
         
-        let currentDate = Date()
-        let calender = Calendar.current
-        let hour = calender.hour
+        let hour = Calendar.current.component(.hour, from: Date())
         if hour >= 5 && hour < 12 {
             welcomeLabel.text = "Goedenmorgen"
         } else if hour >= 12 && hour < 18 {
