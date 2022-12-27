@@ -36,8 +36,8 @@ class HomeViewController: UIViewController {
         welcomeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8).isActive = true
         
         let currentDate = Date()
-        let calender = Calender.current
-        let hour = calender.component(.hour,from: currentDate)
+        let calender = Calendar.current
+        let hour = calender.hour
         if hour >= 5 && hour < 12 {
             welcomeLabel.text = "Goedenmorgen"
         } else if hour >= 12 && hour < 18 {
