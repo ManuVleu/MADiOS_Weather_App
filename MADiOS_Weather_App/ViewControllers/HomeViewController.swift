@@ -1,10 +1,3 @@
-//
-//  HomeViewController.swift
-//  MADiOS_Weather_App
-//
-//  Created by Manu Vleurick on 26/12/2022.
-//
-
 import UIKit
 import Foundation
 
@@ -12,7 +5,7 @@ protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
 }
 
-class HomeViewController: UIViewController {
+class HomeViewController: UIViewController,UICollectionViewDelegate, UICollectionViewDataSource  {
     
     weak var delegate: HomeViewControllerDelegate?
     
@@ -45,8 +38,17 @@ class HomeViewController: UIViewController {
         
         
     }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CityCell.reuseIdentifier, for: indexPath) as! CityCell
+        let city = cities[indexPath.item]
+        cell.configure(with: city)
+        return cell
+    } 
     
     func setupLocatiesCView() {
+        collectionView.register(CityCell.self, forCellWithReuseIdentifier: CityCell.reuseIdentifier)
+
         layout.itemSize = CGSize(width: 50, height: 50)
         layout.minimumLineSpacing = 8
         layout.minimumInteritemSpacing = 8
