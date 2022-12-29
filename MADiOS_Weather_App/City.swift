@@ -6,29 +6,28 @@
 //
 
 import UIKit
-import WeatherAPI
 
 class City {
     let name: String
     let weatherData: [Weather] = []//Lijst van weather objecten voor elke dag
     
-    init(name: String,weatherIcon: UIImage = UIImage(systemName: "cloud.sun.fill") {
+    init(name: String) {
         self.name = name
-        self.weatherIcon = weatherIcon
         setWeatherData()
     }
 
     // TODO set attributes to data gathered
     func setWeatherData() {
-        fetchWeather(for: city) { result in
+        fetchWeather(for: self) { result in
         switch result {
         case .success(let weather):
             print(weather)
+            return weather
         case .failure(let error):
             print("Error: \(error.localizedDescription)")
+            return "Error: \(error.localizedDescription)"
             }
         }
 
-        print(data)
     }
 }

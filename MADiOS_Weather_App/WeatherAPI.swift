@@ -1,9 +1,7 @@
+import Foundation
 
-func fetchWeather(for city: City,completion: @escaping (Result<Void, Error>) -> Void) {
-    if let path = Bundle.main.path(forResource: "Configuration", ofType: "plist"),
-    let dict = NSDictionary(contentsOfFile: path) as? [String: AnyObject] {
-    let apiKey = dict["WeatherAPIKey"] as? String
-    }
+func fetchWeather(for city: City) {
+    let apiKey = "50733048078f462e8fa115246220304"
     let urlString = "http://api.weatherapi.com/v1/forecast.json?key=\(apiKey)&g=\(city.name)&days=5&aqi=yes&alerts=no"
     guard let url = URL(string: urlString) else {
         completion(.failure(APIError.invalidURL))
@@ -17,7 +15,7 @@ func fetchWeather(for city: City,completion: @escaping (Result<Void, Error>) -> 
         }
 
         do {
-            let weatherData = try JSONDecoder().decode(Weather.self, from: data)
+            let weatherData = try JSONDecoder().decode(Any.self, from: data)
             print(weatherData)
             completion(.success(()))
         } catch {
