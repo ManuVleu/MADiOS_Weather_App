@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C928EC08295C819E00A4CBAC /* CityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928EC07295C819E00A4CBAC /* CityCell.swift */; };
 		C971575B295AFD02000F2692 /* InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C971575A295AFD02000F2692 /* InfoViewController.swift */; };
+		C9873A4E295CC41B00D6B806 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9873A4D295CC41A00D6B806 /* City.swift */; };
 		C9F873932959AC0A004E7DD8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F873922959AC0A004E7DD8 /* AppDelegate.swift */; };
 		C9F873952959AC0A004E7DD8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F873942959AC0A004E7DD8 /* SceneDelegate.swift */; };
 		C9F873972959AC0A004E7DD8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F873962959AC0A004E7DD8 /* ViewController.swift */; };
@@ -22,6 +23,7 @@
 /* Begin PBXFileReference section */
 		C928EC07295C819E00A4CBAC /* CityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityCell.swift; sourceTree = "<group>"; };
 		C971575A295AFD02000F2692 /* InfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewController.swift; sourceTree = "<group>"; };
+		C9873A4D295CC41A00D6B806 /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		C9F8738F2959AC0A004E7DD8 /* MADiOS_Weather_App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MADiOS_Weather_App.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9F873922959AC0A004E7DD8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C9F873942959AC0A004E7DD8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 				C9F8739D2959AC10004E7DD8 /* LaunchScreen.storyboard */,
 				C9F873A02959AC10004E7DD8 /* Info.plist */,
 				C928EC07295C819E00A4CBAC /* CityCell.swift */,
+				C9873A4D295CC41A00D6B806 /* City.swift */,
 			);
 			path = MADiOS_Weather_App;
 			sourceTree = "<group>";
@@ -164,6 +167,7 @@
 				C9F873952959AC0A004E7DD8 /* SceneDelegate.swift in Sources */,
 				C971575B295AFD02000F2692 /* InfoViewController.swift in Sources */,
 				C928EC08295C819E00A4CBAC /* CityCell.swift in Sources */,
+				C9873A4E295CC41B00D6B806 /* City.swift in Sources */,
 				C9F873A82959B562004E7DD8 /* MenuViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

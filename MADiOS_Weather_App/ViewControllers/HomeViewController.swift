@@ -5,9 +5,11 @@ protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
 }
 
-class HomeViewController: UIViewController,UICollectionViewDelegate, UICollectionViewDataSource  {
+class HomeViewController: UIViewController  {
+    
     
     weak var delegate: HomeViewControllerDelegate?
+    var cities = [City]()
     
     let welcomeLabel = UILabel()
     let locatiesLabel = UILabel()
@@ -39,35 +41,8 @@ class HomeViewController: UIViewController,UICollectionViewDelegate, UICollectio
         
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CityCell.reuseIdentifier, for: indexPath) as! CityCell
-        let city = cities[indexPath.item]
-        cell.configure(with: city)
-        return cell
-    } 
-    
     func setupLocatiesCView() {
-        collectionView.register(CityCell.self, forCellWithReuseIdentifier: CityCell.reuseIdentifier)
-
-        layout.itemSize = CGSize(width: 50, height: 50)
-        layout.minimumLineSpacing = 8
-        layout.minimumInteritemSpacing = 8
-
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .clear
-        collectionView.delegate = self
-        collectionView.dataSource = self
-
-        view.addSubview(collectionView)
-
-        collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        collectionView.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor, constant: 8).isActive = true
-        collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-
-        collectionView.register(CityCell.self, forCellWithReuseIdentifier: "CityCell")
-
+        
     }
     
     func setupJouwLocatiesLabel() {
