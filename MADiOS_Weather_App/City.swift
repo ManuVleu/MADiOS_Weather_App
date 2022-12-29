@@ -10,9 +10,8 @@ import WeatherAPI
 
 class City {
     let name: String
-    let weatherData: [Weather]()//Lijst van weather objecten voor elke dag
+    let weatherData: [Weather] = []//Lijst van weather objecten voor elke dag
     
-
     init(name: String,weatherIcon: UIImage = UIImage(systemName: "cloud.sun.fill") {
         self.name = name
         self.weatherIcon = weatherIcon
