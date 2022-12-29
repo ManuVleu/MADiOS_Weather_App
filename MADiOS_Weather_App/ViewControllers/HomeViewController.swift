@@ -5,7 +5,7 @@ protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
 }
 
-class HomeViewController: UIViewController  {
+class HomeViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate   {
     
     
     weak var delegate: HomeViewControllerDelegate?
@@ -42,7 +42,29 @@ class HomeViewController: UIViewController  {
     }
 
     func setupLocatiesCView() {
-        
+        // Initialize the collection view
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.backgroundColor = .systemBackground
+        view.addSubview(collectionView)
+
+        // Set up the layout
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 16
+        layout.minimumInteritemSpacing = 16
+
+        // Set up the collection view constraints
+        collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        collectionView.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor, constant: 16).isActive = true
+        collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+
+        // Set up the collection view data source and delegate
+        collectionView.dataSource = self
+        collectionView.delegate = self
+
+        // Register a cell class for the collection view
+        collectionView.register(CityCell.self, forCellWithReuseIdentifier: "cityCell")
     }
     
     func setupJouwLocatiesLabel() {
