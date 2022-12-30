@@ -1,4 +1,7 @@
 
+import UIKit
+import Foundation
+
 class CityCell: UICollectionViewCell {
     
     static let reuseIdentifier = "CityCell"
@@ -33,7 +36,6 @@ class CityCell: UICollectionViewCell {
     
     func configure(with city: City) {
         nameLabel.text = city.name
-        weatherIconImageView.image = city.weatherIcon
     }
     
 }

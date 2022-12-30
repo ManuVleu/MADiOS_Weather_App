@@ -6,6 +6,17 @@ protocol HomeViewControllerDelegate: AnyObject {
 }
 
 class HomeViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate   {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return cities.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cityCell", for: indexPath) as! CityCell
+        let city = cities[indexPath.item]
+        cell.configure(with: city)
+        return cell
+    }
+    
     
     
     weak var delegate: HomeViewControllerDelegate?
@@ -14,10 +25,18 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
     let welcomeLabel = UILabel()
     let locatiesLabel = UILabel()
     let searchBar = UISearchBar()
+    let testButton = UIButton(type: .system)
     let layout = UICollectionViewFlowLayout()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        testButton.setTitle("Click me!", for: .normal)
+        testButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(testButton)
+        testButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        testButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        testButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
 
         // Do any additional setup after loading the view.
         view.backgroundColor = .systemBackground
@@ -112,5 +131,8 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         delegate?.didTapMenuButton()
     }
 
+    @objc func didTapButton() {
+        print("button clciked")
+    }
 
 }
