@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-func fetchWeather(for city: City) -> Result<Weather, Error> {
+func fetchWeather(for city: City) -> Result<WeatherJSON, Error> {
     let apiKey = "50733048078f462e8fa115246220304"
     let urlString = "http://api.weatherapi.com/v1/forecast.json?key=\(apiKey)&g=\(city.name)&days=5&aqi=yes&alerts=no"
     guard let url = URL(string: urlString) else {
@@ -10,15 +10,20 @@ func fetchWeather(for city: City) -> Result<Weather, Error> {
     
     let semaphore = DispatchSemaphore(value: 0)
 
-    var result: Result<Weather, Error>!
+    var result: Result<WeatherJSON, Error>!
     URLSession.shared.dataTask(with: url) { data, response, error in
         if let error = error {
             result = .failure(error)
         } else {
             do {
-                let weatherData = try JSONDecoder().decode(WeatherJSON.self, from: data)
-                print(weatherData)
-                result = .success(weatherData)
+                if let data = data {
+                    let weatherData = try JSONDecoder().decode(WeatherJSON.self, from: data)
+                    print(weatherData)
+                    result = .success(weatherData)
+                } else {
+                    result = .failure("No data returned from the server" as! Error)
+                }
+                
             } catch {
                 result = .failure(error)
             }
@@ -32,8 +37,8 @@ func fetchWeather(for city: City) -> Result<Weather, Error> {
 }
 
 struct WeatherJSON: Decodable {
-    let current: Current
     let location: Location
+    let current: Current
     
     struct Location: Decodable {
         let localtime: String
@@ -41,7 +46,7 @@ struct WeatherJSON: Decodable {
     
     struct Current: Decodable {
         let temp_c: Float
-        let condition: NSCondition
+        let condition: String
         let wind_kph: Float
         let wind_dir: String
         let humidity: Int
@@ -52,7 +57,10 @@ struct WeatherJSON: Decodable {
             let icon: String
         }
     }
+
+    
     //if attribute names differ from the JSON names gebruik CodingKeys
     
     
 }
+
