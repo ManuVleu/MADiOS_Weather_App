@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Foundation
 
 class City {
     let name: String
@@ -13,18 +14,12 @@ class City {
     
     init(name: String) {
         self.name = name
-        setWeatherData()
     }
 
     // TODO set attributes to data gathered
-    func setWeatherData() {
-        let result = fetchWeather(for: self)
-        switch result {
-        case .success(let weatherJSON):
-            let weather = Weather(datum: weatherJSON.location.localtime, temperature: weatherJSON.current.temp_c, conditionText: weatherJSON.current.condition.text, weatherIcon: weatherJSON.current.condition.icon, windKPH: weatherJSON.current.wind_kph, windDirection: weatherJSON.current.wind_dir, humidityPerc: weatherJSON.current.humidity, cloudPerc: weatherJSON.current.cloud)
-            self.weatherData.append(weather)
-        case .failure(let error):
-            print("Failed to fetch weather: \(error)")
-        }
+    func setWeatherData(completion: @escaping (Result<[Weather],Error>) -> Void) {
+        let res = fetchWeather(for: self)
+        
+        
     }
 }
