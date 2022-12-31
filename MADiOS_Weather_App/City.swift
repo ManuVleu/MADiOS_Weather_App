@@ -17,7 +17,7 @@ class City {
     }
 
     // TODO set attributes to data gathered
-    func setWeatherData(completion: @escaping (Result<[Weather],Error>) -> Void) async {
+    func setWeatherData() async {
         let res = await fetchWeather(for: self)
         print(res)
         

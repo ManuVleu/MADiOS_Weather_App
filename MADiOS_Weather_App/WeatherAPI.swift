@@ -33,6 +33,10 @@ func fetchWeather(for city: City) -> Result<WeatherJSON, Error> {
     }.resume()
 
     semaphore.wait()
+    if let result = result {
+        let anyRes = result as Any
+        print(anyRes)
+    }
     return result
 }
 

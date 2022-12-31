@@ -26,17 +26,11 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
     let locatiesLabel = UILabel()
     let searchBar = UISearchBar()
     let testButton = UIButton(type: .system)
+    let testLabel = UILabel()
     let layout = UICollectionViewFlowLayout()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        testButton.setTitle("Click me!", for: .normal)
-        testButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(testButton)
-        testButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        testButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        testButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
 
         // Do any additional setup after loading the view.
         view.backgroundColor = .systemBackground
@@ -54,12 +48,31 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         //Jouw locaties-label
         setupJouwLocatiesLabel()
         
+        setupTestButtonLabel()
+        
+        
         //CollectionView voor locaties
-        setupLocatiesCView()
+        //setupLocatiesCView()
         
         
     }
 
+    func setupTestButtonLabel() {
+        testButton.setTitle("Click me!", for: .normal)
+        testButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(testButton)
+        testButton.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        testButton.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        testButton.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor, constant: 8).isActive = true
+        testButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
+        
+        view.addSubview(testLabel)
+        testLabel.text = "tstLabel"
+        testLabel.translatesAutoresizingMaskIntoConstraints = false
+        testLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8).isActive = true
+        testLabel.topAnchor.constraint(equalTo: testButton.bottomAnchor, constant: 20).isActive = true
+    }
+    
     func setupLocatiesCView() {
         // Initialize the collection view
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -131,8 +144,44 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         delegate?.didTapMenuButton()
     }
 
-    @objc func didTapButton() {
-        print("button clciked")
+    @objc func didTapButton() async {
+        let city = City(name: "Ghent")
+        //let res = await city.setWeatherData()
+        getDataFromAPI()
+    }
+    
+    func getDataFromAPI() {
+        
+        let apiUrl = "https://reqbin.com/echo/get/json"
+        
+        guard let url = URL(string: apiUrl) else {
+            print("Error: invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: request) {
+            data,response,error in
+            print("test")
+            if let data = data, let string = String(data: data, encoding: .utf8) {
+                print(string)
+            }
+            
+            //if let data  = data {
+                //do {
+                    //let jsonData = try JSONSerialization.jsonObject(with: data, options: [])
+                    //print("jsonData: \(jsonData)")
+                //} catch {
+                    //print("Error: Failed to parse JSON data")
+                //}
+            //}
+            
+        //}
+        
+        task.resume()
+        }
     }
 
 }
