@@ -180,8 +180,8 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
             
         //}
         
+        //task.resume()
         task.resume()
         }
     }
-
 }
