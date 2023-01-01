@@ -50,7 +50,7 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         
         setupTestButtonLabel()
 
-        let url = NSURL(string: "")
+        let url = NSURL(string: "https://api.weatherapi.com/v1/current.xml?key=50733048078f462e8fa115246220304&q=London&aqi=no")
         
         let task = URLSession.shared.dataTask(with: url! as URL) {
             (data,response,error) in
