@@ -10,14 +10,23 @@ import Foundation
 
 class City {
     let name: String
-    let region: String
-    let country: String
+    var region: String
+    var country: String
     
-    let weather: Weather
+    var weather: Weather
     
-    init(name: String, region: String, country: String) {
+    init(name: String, region: String = "Unknown", country: String = "Unknown") {
         self.name = name
         self.region = region
+        self.country = country
+        self.weather = Weather()
+    }
+    
+    func setRegion(region: String) {
+        self.region = region
+    }
+    
+    func setCountry(country: String) {
         self.country = country
     }
 
@@ -25,11 +34,12 @@ class City {
         self.weather = weather
    }
 
-    func toString(){
+    func toString() -> String {
         var cityStr = ""
-        cityStr += "City: \(self.name)\n"
-        cityStr += "Region: \(self.region), \(self.country)\n"
-        city += self.weather.toString()
+        cityStr = cityStr + "City: \(self.name)\n"
+        cityStr = cityStr + "Region: \(self.region), \(self.country)\n"
+        let weatherStr: String = self.weather.toString()
+        cityStr = cityStr + weatherStr
         return cityStr
     }
 

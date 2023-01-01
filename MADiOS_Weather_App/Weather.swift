@@ -10,6 +10,15 @@ class Weather {
     let humidityPerc: Float
     let cloudPerc: Float
 
+    init() {
+        self.localtime = ""
+        self.temperature = 0.0
+        self.condition = ""
+        self.windKpH = 0.0
+        self.windDirection = ""
+        self.humidityPerc = 0.0
+        self.cloudPerc = 0.0
+    }
 
     init(localtime: String,temperature: Float,condition: String,windKpH: Float,windDirection:String,humidityPerc:Float,cloudPerc:Float) {
         self.localtime = localtime
@@ -21,15 +30,15 @@ class Weather {
         self.cloudPerc = cloudPerc
     }
 
-    func toString() {
+    func toString() -> String {
         var weatherStr = ""
-        weatherStr += "Weather on \(self.localtime) localtime\n"
-        weatherStr += "Temperature: \(self.temperature) °C\n"
-        weatherStr +="Wind speed: \(self.windKpH) kph\n"
-        weatherStr +="Wind direction: \(self.windDirection)\n"
-        weatherStr +="Humidity: \(self.humidityPerc) %\n"
-        weatherStr +="Cloud: \(self.cloudPerc) %\n"
-        weatherStr += "Condition: \(self.condition)\n"
+        weatherStr = weatherStr + "Weather on \(self.localtime) localtime\n"
+        weatherStr = weatherStr + "Temperature: \(self.temperature) °C\n"
+        weatherStr = weatherStr + "Wind speed: \(self.windKpH) kph\n"
+        weatherStr = weatherStr + "Wind direction: \(self.windDirection)\n"
+        weatherStr = weatherStr + "Humidity: \(self.humidityPerc) %\n"
+        weatherStr = weatherStr + "Cloud: \(self.cloudPerc) %\n"
+        weatherStr = weatherStr + "Condition: \(self.condition)\n"
         return weatherStr
     }
 

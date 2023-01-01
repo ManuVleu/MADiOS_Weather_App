@@ -50,13 +50,8 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         
         setupTestButtonLabel()
 
-        let city = getAPIData(cityName: "Ghent")
+        var city = getAPIData(cityName: "Ghent")
         print(city.toString())
-
-        
-        
-       
-        
         
         //CollectionView voor locaties
         //setupLocatiesCView()
@@ -152,7 +147,7 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
     }
 
     @objc func didTapButton() async {
-        let city = City(name: "Ghent")
+        //let city = City(name: "Ghent")
         //let res = await city.setWeatherData()
         //getDataFromAPI { (weather) in
 
@@ -160,9 +155,10 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         //}
     }
 
-    func getAPIData(cityName: String) {
+    func getAPIData(cityName: String) -> City {
         let url = NSURL(string: "https://api.weatherapi.com/v1/current.xml?key=50733048078f462e8fa115246220304&q=\(cityName)&aqi=no")
         
+        var city = City(name: cityName)
         let task = URLSession.shared.dataTask(with: url! as URL) {
             (data,response,error) in
             if data != nil
@@ -180,8 +176,10 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
                 let humidity = xml["current"]["humidity"].element!.text
                 let cloud = xml["current"]["cloud"].element!.text
                 
-                let city = City(name: cityName, region: region,country:country)
-                let weather = Weather(localtime: localtime,temperature: temp_c, condition: condition, windKpH: wind_kph, windDirection: wind_dir, humidityPerc: humidity, cloudPerc: cloud)
+                let city = City(name: cityName)
+                city.setRegion(region: region)
+                city.setCountry(country: country)
+                let weather = Weather(localtime: localtime,temperature: (temp_c as NSString).floatValue, condition: condition, windKpH: (wind_kph as NSString).floatValue, windDirection: wind_dir, humidityPerc: (humidity as NSString).floatValue, cloudPerc: (cloud as NSString).floatValue)
                 
                 city.setWeather(weather: weather)
             } else {
