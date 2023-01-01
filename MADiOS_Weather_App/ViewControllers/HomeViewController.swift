@@ -1,6 +1,6 @@
 import UIKit
 import Foundation
-
+import SWXMLHash
 protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
 }
@@ -50,7 +50,7 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         
         setupTestButtonLabel()
 
-        let url = NSURL(string: "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml")
+        let url = NSURL(string: "")
         
         let task = URLSession.shared.dataTask(with: url! as URL) {
             (data,response,error) in
@@ -58,7 +58,9 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
             {
                 let feed=NSString(data: data!, encoding: String.Encoding.utf8.rawValue)! as String
                 let xml = SWXMLHash.parse(feed)
+                print("begin")
                 print(xml)
+                print("end")
             
             } else {
                 print("Data is nil")
