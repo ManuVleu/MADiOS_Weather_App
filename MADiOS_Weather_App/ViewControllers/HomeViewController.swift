@@ -50,6 +50,11 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         
         setupTestButtonLabel()
         
+        getDataFromAPI { (weather) in
+
+            print(weather.location.localtime)
+        }
+        
         
         //CollectionView voor locaties
         //setupLocatiesCView()
@@ -147,10 +152,10 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
     @objc func didTapButton() async {
         let city = City(name: "Ghent")
         //let res = await city.setWeatherData()
-        getDataFromAPI { (weather) in
+        //getDataFromAPI { (weather) in
 
-            print(weather)
-        }
+            //print(weather)
+        //}
     }
     
     func getDataFromAPI(completionHandler: @escaping (WeatherJSON) -> Void) {
@@ -168,7 +173,7 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
 
             do {
 
-                let weatherData = try JSONDecoder().decode(type: WeatherJSON.self, from: data)
+                let weatherData = try JSONDecoder().decode(WeatherJSON.self, from: data)
                 completionHandler(weatherData)
             }
             catch {
