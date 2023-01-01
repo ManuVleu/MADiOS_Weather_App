@@ -40,31 +40,5 @@ func fetchWeather(for city: City) -> Result<WeatherJSON, Error> {
     return result
 }
 
-struct WeatherJSON: Decodable {
-    let location: Location
-    let current: Current
-    
-    struct Location: Decodable {
-        let localtime: String
-    }
-    
-    struct Current: Decodable {
-        let temp_c: Float
-        let condition: String
-        let wind_kph: Float
-        let wind_dir: String
-        let humidity: Int
-        let cloud: Int
-        
-        struct Condition: Decodable {
-            let text: String
-            let icon: String
-        }
-    }
 
-    
-    //if attribute names differ from the JSON names gebruik CodingKeys
-    
-    
-}
 

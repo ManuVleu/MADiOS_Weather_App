@@ -147,41 +147,36 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
     @objc func didTapButton() async {
         let city = City(name: "Ghent")
         //let res = await city.setWeatherData()
-        getDataFromAPI()
+        getDataFromAPI { (weather) in
+
+            print(weather)
+        }
     }
     
-    func getDataFromAPI() {
+    func getDataFromAPI(completionHandler: @escaping (WeatherJSON) -> Void) {
         
-        let apiUrl = "https://reqbin.com/echo/get/json"
+        let apiUrl = "https://api.weatherapi.com/v1/current.json?key=50733048078f462e8fa115246220304&q=London&aqi=no"
         
         guard let url = URL(string: apiUrl) else {
             print("Error: invalid URL")
             return
         }
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        
-        let task = URLSession.shared.dataTask(with: request) {
-            data,response,error in
-            print("test")
-            if let data = data, let string = String(data: data, encoding: .utf8) {
-                print(string)
+        let task = URLSession.shared.dataTask(with: url) {
+            (data,response,error) in
+            guard let data = data else { return }
+
+            do {
+
+                let weatherData = try JSONDecoder().decode(type: WeatherJSON.self, from: data)
+                completionHandler(weatherData)
+            }
+            catch {
+                let error = error
+                print(error.localizedDescription)
             }
             
-            //if let data  = data {
-                //do {
-                    //let jsonData = try JSONSerialization.jsonObject(with: data, options: [])
-                    //print("jsonData: \(jsonData)")
-                //} catch {
-                    //print("Error: Failed to parse JSON data")
-                //}
-            //}
             
-        //}
-        
-        //task.resume()
-        task.resume()
-        }
+        }.resume()
     }
 }
