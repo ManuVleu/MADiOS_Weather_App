@@ -49,11 +49,24 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         setupJouwLocatiesLabel()
         
         setupTestButtonLabel()
-        
-        getDataFromAPI { (weather) in
 
-            print(weather.location.localtime)
+        let url = NSURL(string: "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml")
+        
+        let task = URLSession.shared.dataTask(with: url! as URL) {
+            (data,response,error) in
+            if data != nil
+            {
+                let feed=NSString(data: data!, encoding: String.Encoding.utf8.rawValue)! as String
+                let xml = SWXMLHash.parse(feed)
+                print(xml)
+            
+            } else {
+                print("Data is nil")
+            }
         }
+        task.resume()
+        
+       
         
         
         //CollectionView voor locaties
@@ -158,30 +171,6 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         //}
     }
     
-    func getDataFromAPI(completionHandler: @escaping (WeatherJSON) -> Void) {
         
-        let apiUrl = "https://api.weatherapi.com/v1/current.json?key=50733048078f462e8fa115246220304&q=London&aqi=no"
         
-        guard let url = URL(string: apiUrl) else {
-            print("Error: invalid URL")
-            return
-        }
-        
-        let task = URLSession.shared.dataTask(with: url) {
-            (data,response,error) in
-            guard let data = data else { return }
-
-            do {
-
-                let weatherData = try JSONDecoder().decode(WeatherJSON.self, from: data)
-                completionHandler(weatherData)
-            }
-            catch {
-                let error = error
-                print(error.localizedDescription)
-            }
-            
-            
-        }.resume()
-    }
 }
