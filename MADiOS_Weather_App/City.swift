@@ -10,16 +10,27 @@ import Foundation
 
 class City {
     let name: String
-    let weatherData: [Weather] = []//Lijst van weather objecten voor elke dag
+    let region: String
+    let country: String
     
-    init(name: String) {
+    let weather: Weather
+    
+    init(name: String, region: String, country: String) {
         self.name = name
+        self.region = region
+        self.country = country
     }
 
-    // TODO set attributes to data gathered
-    func setWeatherData() async {
-        let res = await fetchWeather(for: self)
-        print(res)
-        
+   func setWeather(weather: Weather) {
+        self.weather = weather
+   }
+
+    func toString(){
+        var cityStr = ""
+        cityStr += "City: \(self.name)\n"
+        cityStr += "Region: \(self.region), \(self.country)\n"
+        city += self.weather.toString()
+        return cityStr
     }
+
 }

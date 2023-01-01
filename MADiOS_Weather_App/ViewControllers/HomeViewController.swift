@@ -50,44 +50,10 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         
         setupTestButtonLabel()
 
-        let url = NSURL(string: "https://api.weatherapi.com/v1/current.xml?key=50733048078f462e8fa115246220304&q=\(cityName)&aqi=no")
+        let city = getAPIData(cityName: "Ghent")
+        print(city.toString())
+
         
-        let task = URLSession.shared.dataTask(with: url! as URL) {
-            (data,response,error) in
-            if data != nil
-            {
-                let feed=NSString(data: data!, encoding: String.Encoding.utf8.rawValue)! as String
-                var xml = SWXMLHash.parse(feed)
-                xml = xml["root"]
-                let region = xml["location"]["region"].element!.text
-                let country = xml["location"]["country"].element!.text
-                let localtime = xml["location"]["localtime"].element!.text
-                let temp_c = xml["current"]["temp_c"].element!.text
-                let condition = xml["current"]["condition"]["text"].element!.text
-                let wind_kph = xml["current"]["wind_kph"].element!.text
-                let wind_dir = xml["current"]["wind_dir"].element!.text
-                let humidity = xml["current"]["humidity"].element!.text
-                let cloud = xml["current"]["cloud"].element!.text
-                
-                let city = City(name: cityName, region: region,)
-                let weather = Weather()
-                
-                city.setWeather(weather: weather)
-                
-                print("Region: \(region)")
-                print("Country: \(country)")
-                print("Localtime: \(localtime)")
-                print("Temp c: \(temp_c)")
-                print("Condition: \(condition)")
-                print("Wind KpH: \(wind_kph)")
-                print("Wind direction: \(wind_dir)")
-                print("Humidity: \(humidity)")
-                print("Cloud: \(cloud)")
-            } else {
-                print("Data is nil")
-            }
-        }
-        task.resume()
         
        
         
@@ -192,6 +158,39 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
 
             //print(weather)
         //}
+    }
+
+    func getAPIData(cityName: String) {
+        let url = NSURL(string: "https://api.weatherapi.com/v1/current.xml?key=50733048078f462e8fa115246220304&q=\(cityName)&aqi=no")
+        
+        let task = URLSession.shared.dataTask(with: url! as URL) {
+            (data,response,error) in
+            if data != nil
+            {
+                let feed=NSString(data: data!, encoding: String.Encoding.utf8.rawValue)! as String
+                var xml = SWXMLHash.parse(feed)
+                xml = xml["root"]
+                let region = xml["location"]["region"].element!.text
+                let country = xml["location"]["country"].element!.text
+                let localtime = xml["location"]["localtime"].element!.text
+                let temp_c = xml["current"]["temp_c"].element!.text
+                let condition = xml["current"]["condition"]["text"].element!.text
+                let wind_kph = xml["current"]["wind_kph"].element!.text
+                let wind_dir = xml["current"]["wind_dir"].element!.text
+                let humidity = xml["current"]["humidity"].element!.text
+                let cloud = xml["current"]["cloud"].element!.text
+                
+                let city = City(name: cityName, region: region,country:country)
+                let weather = Weather(localtime: localtime,temperature: temp_c, condition: condition, windKpH: wind_kph, windDirection: wind_dir, humidityPerc: humidity, cloudPerc: cloud)
+                
+                city.setWeather(weather: weather)
+            } else {
+                print("Data is nil")
+            }
+        }
+        task.resume()
+
+        return city
     }
     
         
