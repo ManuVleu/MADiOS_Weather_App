@@ -1,11 +1,13 @@
 import UIKit
 import Foundation
 import SWXMLHash
+import CoreLocation
+
 protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
 }
 
-class HomeViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate   {
+class HomeViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate, CLLocationManagerDelegate   {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return cities.count
     }
@@ -17,10 +19,40 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         return cell
     }
     
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Error locationManager: \(error)")
+    }
     
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            geocoder.reverseGeocodeLocation(location) {
+                (placemarks,error) in
+                if let error = error {
+                    print(error)
+                    return
+                }
+                
+                if let placemarks = placemarks {
+                    let placemark = placemarks[0]
+                    self.detectedCity = "\(placemark.locality!)"
+                    self.getAPIData(cityName: self.detectedCity) {
+                        response in
+                        if let response = response {
+                            let city = response
+                            self.cities.append(city)
+                        }
+                    }
+                }
+            }
+        }
+    }
     
     weak var delegate: HomeViewControllerDelegate?
+    let locationManager = CLLocationManager()
+    let authLocationStatus = CLLocationManager.authorizationStatus()
+    let geocoder = CLGeocoder()
     var cities = [City]()
+    var detectedCity = ""
     
     let welcomeLabel = UILabel()
     let locatiesLabel = UILabel()
@@ -31,6 +63,12 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        locationManager.delegate = self
+        
+        locationManager.requestAlwaysAuthorization()
+        
+        locationManager.requestLocation()
 
         // Do any additional setup after loading the view.
         view.backgroundColor = .systemBackground
@@ -48,11 +86,6 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         //Jouw locaties-label
         setupJouwLocatiesLabel()
         
-        setupTestButtonLabel()
-
-        var city = getAPIData(cityName: "Ghent")
-        print(city.toString())
-        
         //CollectionView voor locaties
         //setupLocatiesCView()
         
@@ -69,7 +102,7 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         testButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         
         view.addSubview(testLabel)
-        testLabel.text = "tstLabel"
+        testLabel.text = "testLabel"
         testLabel.translatesAutoresizingMaskIntoConstraints = false
         testLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8).isActive = true
         testLabel.topAnchor.constraint(equalTo: testButton.bottomAnchor, constant: 20).isActive = true
@@ -146,19 +179,14 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         delegate?.didTapMenuButton()
     }
 
-    @objc func didTapButton() async {
-        //let city = City(name: "Ghent")
-        //let res = await city.setWeatherData()
-        //getDataFromAPI { (weather) in
-
-            //print(weather)
-        //}
+    @objc func didTapButton() {
+        print(self.cities.count)
     }
 
-    func getAPIData(cityName: String) -> City {
-        let url = NSURL(string: "https://api.weatherapi.com/v1/current.xml?key=50733048078f462e8fa115246220304&q=\(cityName)&aqi=no")
+    func getAPIData(cityName: String, completion: @escaping (City?) -> ()){
+        let url = NSURL(string: "https://api.weatherapi.com/v1/current.xml?key=50733048078f462e8fa115246220304&q=\(cityName.replacingOccurrences(of: " ", with: ""))&aqi=no")
         
-        var city = City(name: cityName)
+        let city = City(name: cityName)
         let task = URLSession.shared.dataTask(with: url! as URL) {
             (data,response,error) in
             if data != nil
@@ -176,19 +204,20 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
                 let humidity = xml["current"]["humidity"].element!.text
                 let cloud = xml["current"]["cloud"].element!.text
                 
-                let city = City(name: cityName)
                 city.setRegion(region: region)
                 city.setCountry(country: country)
                 let weather = Weather(localtime: localtime,temperature: (temp_c as NSString).floatValue, condition: condition, windKpH: (wind_kph as NSString).floatValue, windDirection: wind_dir, humidityPerc: (humidity as NSString).floatValue, cloudPerc: (cloud as NSString).floatValue)
                 
                 city.setWeather(weather: weather)
+                completion(city)
             } else {
                 print("Data is nil")
+                completion(nil)
+                return
             }
         }
         task.resume()
-
-        return city
+        
     }
     
         
