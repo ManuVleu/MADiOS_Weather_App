@@ -86,6 +86,8 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         //Jouw locaties-label
         setupJouwLocatiesLabel()
         
+        setupTestButtonLabel()
+        print("done")
         //CollectionView voor locaties
         //setupLocatiesCView()
         
@@ -102,7 +104,7 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         testButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         
         view.addSubview(testLabel)
-        testLabel.text = "testLabel"
+        testLabel.text = detectedCity
         testLabel.translatesAutoresizingMaskIntoConstraints = false
         testLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8).isActive = true
         testLabel.topAnchor.constraint(equalTo: testButton.bottomAnchor, constant: 20).isActive = true
@@ -180,10 +182,10 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
     }
 
     @objc func didTapButton() {
-        print(self.cities.count)
+        self.testLabel.text = self.detectedCity
     }
 
-    func getAPIData(cityName: String, completion: @escaping (City?) -> ()){
+    func getAPIData(cityName: String, completion: @escaping (City?) -> ()) {
         let url = NSURL(string: "https://api.weatherapi.com/v1/current.xml?key=50733048078f462e8fa115246220304&q=\(cityName.replacingOccurrences(of: " ", with: ""))&aqi=no")
         
         let city = City(name: cityName)
