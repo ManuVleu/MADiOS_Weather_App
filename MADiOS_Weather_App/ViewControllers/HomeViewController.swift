@@ -95,16 +95,12 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
     
     func updateUI() {
         self.testLabel.text = self.detectedCity
-        //updateStackView()
+        updateStackView()
     }
     
     func updateStackView() {
-        print("updated stack view")
         for city in cities {
-            let button = UIButton(type: .system)
-            button.setTitle(city.name, for: .normal)
-            button.addTarget(self, action: #selector(didTapCityButton), for: .touchUpInside)
-            self.stackView.addArrangedSubview(button)
+            addCityStackView(city: city)
         }
     }
     
@@ -126,23 +122,43 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
     }
     
     func setupStackView() {
-        let button = UIButton(type: .system)
-        button.setTitle("testButton", for: .normal)
-        stackView.addArrangedSubview(button)
         
-        stackView.axis = .horizontal
+        stackView.axis = .vertical
         stackView.distribution = .fillEqually
         view.addSubview(stackView)
-        stackView.addArrangedSubview(button)
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        stackView.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor, constant: 8).isActive = true
         for city in cities {
-            print("city")
-            let button = UIButton(type: .system)
-            button.setTitle(city.name, for: .normal)
-            button.addTarget(self, action: #selector(didTapCityButton), for: .touchUpInside)
-            stackView.addArrangedSubview(button)
+            addCityStackView(city: city)
         }
     }
     
+    func addCityStackView(city: City) {
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        self.stackView.addArrangedSubview(containerView)
+        let button = UIButton(type: .system)
+        button.setTitle(city.name, for: .normal)
+        button.addTarget(self,action: #selector(didTapCityButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(button)
+        let trashButton = UIButton(type: .system)
+        trashButton.setTitle("Trash", for: .normal)
+        trashButton.addTarget(self, action: #selector(didTapTrashButton(_:)), for: .touchUpInside)
+        trashButton.setImage(UIImage(systemName: "trash"),for: .normal)
+        trashButton.tintColor = .systemRed
+        trashButton.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(trashButton)
+        button.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        button.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        
+        trashButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        trashButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        
+        containerView.heightAnchor.constraint(equalToConstant: 44).isActive = true
+    }
     
     func setupJouwLocatiesLabel() {
         view.addSubview(locatiesLabel)
@@ -195,6 +211,11 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
     
     @objc func didTapCityButton() {
         print("cityButton clicked")
+    }
+    
+    @objc func didTapTrashButton(_ sender: UIButton) {
+        print("Tapped trashbutton")
+        sender.superview?.removeFromSuperview()
     }
 
     func getAPIData(cityName: String, completion: @escaping (City?) -> ()) {
