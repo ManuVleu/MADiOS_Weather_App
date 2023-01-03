@@ -211,12 +211,12 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
     
     @objc func didTapCityButton(_ sender: UIButton) {
         let cityVC = CityViewController(city: cities[0])
-        cityVC.city = sender.title(for: .normal)
-        self.present(cityVC, animated: true, completion: nil)
+        navigationController?.pushViewController(cityVC, animated: true)
     }
     
     @objc func didTapTrashButton(_ sender: UIButton) {
-        sender.superview?.removeFromSuperview()
+        stackView.removeArrangedSubview(sender)
+        sender.removeFromSuperview()
     }
 
     func getAPIData(cityName: String, completion: @escaping (City?) -> ()) {
