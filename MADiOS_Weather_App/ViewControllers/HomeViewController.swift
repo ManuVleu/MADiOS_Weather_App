@@ -134,12 +134,6 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
         stackView.distribution = .fillEqually
         view.addSubview(stackView)
         stackView.addArrangedSubview(button)
-        //NSLayoutConstraint.activate([
-            //stackView.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor,constant: 8),
-            //stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 8),
-            //stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 8)
-            //stackView.heightAnchor.constraint(equalToConstant: 10)
-        //])
         for city in cities {
             print("city")
             let button = UIButton(type: .system)
