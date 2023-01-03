@@ -215,8 +215,9 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
     }
     
     @objc func didTapTrashButton(_ sender: UIButton) {
-        stackView.removeArrangedSubview(sender)
-        sender.removeFromSuperview()
+        // self.cities.remove() TODO
+        stackView.removeArrangedSubview(sender.superview!)
+        sender.superview?.removeFromSuperview()
     }
 
     func getAPIData(cityName: String, completion: @escaping (City?) -> ()) {
