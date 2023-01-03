@@ -7,17 +7,7 @@ protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
 }
 
-class HomeViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate, CLLocationManagerDelegate   {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return cities.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cityCell", for: indexPath) as! CityCell
-        let city = cities[indexPath.item]
-        cell.configure(with: city)
-        return cell
-    }
+class HomeViewController: UIViewController, CLLocationManagerDelegate   {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Error locationManager: \(error)")
@@ -68,7 +58,7 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
     let searchBar = UISearchBar()
     let testButton = UIButton(type: .system)
     let testLabel = UILabel()
-    let layout = UICollectionViewFlowLayout()
+    let stackView = UIStackView(frame: CGRect(x: 0,y: 0,width: 200, height: 50))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,15 +85,27 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         //Jouw locaties-label
         setupJouwLocatiesLabel()
         
-        setupTestButtonLabel()
+        // setupTestButtonLabel()
+        
         //CollectionView voor locaties
-        setupLocatiesCView()
+        setupStackView()
         
         
     }
     
     func updateUI() {
         self.testLabel.text = self.detectedCity
+        updateStackView()
+    }
+    
+    func updateStackView() {
+        print("updated stack view")
+        for city in cities {
+            let button = UIButton(type: .system)
+            button.setTitle(city.name, for: .normal)
+            button.addTarget(self, action: #selector(didTapCityButton), for: .touchUpInside)
+            self.stackView.addArrangedSubview(button)
+        }
     }
     
 
@@ -123,31 +125,24 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         testLabel.topAnchor.constraint(equalTo: testButton.bottomAnchor, constant: 20).isActive = true
     }
     
-    func setupLocatiesCView() {
-        // Initialize the collection view
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .systemBackground
-        view.addSubview(collectionView)
-
-        // Set up the layout
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 16
-        layout.minimumInteritemSpacing = 16
-
-        // Set up the collection view constraints
-        collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        collectionView.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor, constant: 16).isActive = true
-        collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-
-        // Set up the collection view data source and delegate
-        collectionView.dataSource = self
-        collectionView.delegate = self
-
-        // Register a cell class for the collection view
-        collectionView.register(CityCell.self, forCellWithReuseIdentifier: "cityCell")
+    func setupStackView() {
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        view.addSubview(stackView)
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor,constant: 8),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 8),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 8)
+            //stackView.heightAnchor.constraint(equalToConstant: 10)
+        ])
+        for city in cities {
+            let button = UIButton(type: .system)
+            button.setTitle(city.name, for: .normal)
+            button.addTarget(self, action: #selector(didTapCityButton), for: .touchUpInside)
+            stackView.addArrangedSubview(button)
+        }
     }
+    
     
     func setupJouwLocatiesLabel() {
         view.addSubview(locatiesLabel)
@@ -198,7 +193,9 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         self.testLabel.text = self.detectedCity
     }
     
-    
+    @objc func didTapCityButton() {
+        print("cityButton clicked")
+    }
 
     func getAPIData(cityName: String, completion: @escaping (City?) -> ()) {
         let url = NSURL(string: "https://api.weatherapi.com/v1/current.xml?key=50733048078f462e8fa115246220304&q=\(cityName.replacingOccurrences(of: " ", with: ""))&aqi=no")
