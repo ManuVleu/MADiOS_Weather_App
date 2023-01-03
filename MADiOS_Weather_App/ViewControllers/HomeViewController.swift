@@ -51,8 +51,17 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
     let locationManager = CLLocationManager()
     let authLocationStatus = CLLocationManager.authorizationStatus()
     let geocoder = CLGeocoder()
-    var cities = [City]()
     var detectedCity = ""
+    var cities = [City]() {
+        didSet {
+            if oldValue.count != cities.count {
+                DispatchQueue.main.async {
+                    self.updateUI()
+                }
+                
+            }
+        }
+    }
     
     let welcomeLabel = UILabel()
     let locatiesLabel = UILabel()
@@ -87,12 +96,16 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
         setupJouwLocatiesLabel()
         
         setupTestButtonLabel()
-        print("done")
         //CollectionView voor locaties
-        //setupLocatiesCView()
+        setupLocatiesCView()
         
         
     }
+    
+    func updateUI() {
+        self.testLabel.text = self.detectedCity
+    }
+    
 
     func setupTestButtonLabel() {
         testButton.setTitle("Click me!", for: .normal)
@@ -184,6 +197,8 @@ class HomeViewController: UIViewController,UICollectionViewDataSource,UICollecti
     @objc func didTapButton() {
         self.testLabel.text = self.detectedCity
     }
+    
+    
 
     func getAPIData(cityName: String, completion: @escaping (City?) -> ()) {
         let url = NSURL(string: "https://api.weatherapi.com/v1/current.xml?key=50733048078f462e8fa115246220304&q=\(cityName.replacingOccurrences(of: " ", with: ""))&aqi=no")
