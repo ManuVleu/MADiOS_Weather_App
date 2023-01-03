@@ -58,7 +58,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
     let searchBar = UISearchBar()
     let testButton = UIButton(type: .system)
     let testLabel = UILabel()
-    let stackView = UIStackView(frame: CGRect(x: 0,y: 0,width: 200, height: 50))
+    let stackView = UIStackView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,7 +95,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
     
     func updateUI() {
         self.testLabel.text = self.detectedCity
-        updateStackView()
+        //updateStackView()
     }
     
     func updateStackView() {
@@ -126,16 +126,22 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
     }
     
     func setupStackView() {
+        let button = UIButton(type: .system)
+        button.setTitle("testButton", for: .normal)
+        stackView.addArrangedSubview(button)
+        
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         view.addSubview(stackView)
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor,constant: 8),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 8),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 8)
+        stackView.addArrangedSubview(button)
+        //NSLayoutConstraint.activate([
+            //stackView.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor,constant: 8),
+            //stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 8),
+            //stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 8)
             //stackView.heightAnchor.constraint(equalToConstant: 10)
-        ])
+        //])
         for city in cities {
+            print("city")
             let button = UIButton(type: .system)
             button.setTitle(city.name, for: .normal)
             button.addTarget(self, action: #selector(didTapCityButton), for: .touchUpInside)
