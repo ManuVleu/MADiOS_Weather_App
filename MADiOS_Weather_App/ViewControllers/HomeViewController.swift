@@ -141,7 +141,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
         self.stackView.addArrangedSubview(containerView)
         let button = UIButton(type: .system)
         button.setTitle(city.name, for: .normal)
-        button.addTarget(self,action: #selector(didTapCityButton), for: .touchUpInside)
+        button.addTarget(self,action: #selector(didTapCityButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(button)
         let trashButton = UIButton(type: .system)
@@ -209,12 +209,13 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
         self.testLabel.text = self.detectedCity
     }
     
-    @objc func didTapCityButton() {
-        print("cityButton clicked")
+    @objc func didTapCityButton(_ sender: UIButton) {
+        let cityVC = CityViewController(city: cities[0])
+        cityVC.city = sender.title(for: .normal)
+        self.present(cityVC, animated: true, completion: nil)
     }
     
     @objc func didTapTrashButton(_ sender: UIButton) {
-        print("Tapped trashbutton")
         sender.superview?.removeFromSuperview()
     }
 
