@@ -8,7 +8,7 @@
 import UIKit
 import Foundation
 
-class City {
+class City: Equatable {
     let name: String
     var region: String
     var country: String
@@ -41,6 +41,10 @@ class City {
         let weatherStr: String = self.weather.toString()
         cityStr = cityStr + weatherStr
         return cityStr
+    }
+    
+    static func ==(lhs: City, rhs: City) -> Bool {
+        return lhs.name == rhs.name
     }
 
 }

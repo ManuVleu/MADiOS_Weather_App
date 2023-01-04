@@ -7,7 +7,34 @@ protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
 }
 
-class HomeViewController: UIViewController, CLLocationManagerDelegate   {
+class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchResultsUpdating, UISearchBarDelegate {
+    
+    //executes evertime sometihing is typed in searchbar
+    func updateSearchResults(for searchController: UISearchController) {
+        let searchText = searchBar.searchBar.text!
+        //print(searchText)
+    }
+    
+    // executed only when you Enter
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let searchText = searchBar.text!
+        self.getAPIData(cityName: searchText) {
+            city in
+            if let city = city {
+                let cityVC = CityViewController(city: city)
+                // self.cities.append(city)
+                DispatchQueue.main.async {
+                    self.errorLabel.isHidden = true
+                    self.navigationController?.pushViewController(cityVC, animated: true)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.errorLabel.isHidden = false
+                    self.errorLabel.text = "No city found with that name"
+                }
+            }
+        }
+    }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Error locationManager: \(error)")
@@ -54,8 +81,10 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
     }
     
     let welcomeLabel = UILabel()
+    let errorLabel = UILabel()
     let locatiesLabel = UILabel()
-    let searchBar = UISearchBar()
+    let searchBar = UISearchController(searchResultsController: nil)
+    let searchBarContainer = UIView()
     let testButton = UIButton(type: .system)
     let testLabel = UILabel()
     let stackView = UIStackView()
@@ -79,6 +108,9 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
         //welcomeLabel that adapts to the time of day
         setupWelcomeLabel()
         
+        // Error label for searchBar
+        setupErrorLabel()
+        
         //searchBar voor cities
         setupSearchBar()
         
@@ -95,6 +127,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
     
     func updateUI() {
         self.testLabel.text = self.detectedCity
+        self.errorLabel.isHidden = true
         updateStackView()
     }
     
@@ -104,6 +137,17 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
         }
     }
     
+    func setupErrorLabel() {
+        view.addSubview(errorLabel)
+        errorLabel.text = ""
+        errorLabel.textColor = .red
+        errorLabel.translatesAutoresizingMaskIntoConstraints = false
+        errorLabel.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor).isActive = true
+        errorLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 8).isActive = true
+        errorLabel.widthAnchor.constraint(equalTo: welcomeLabel.widthAnchor).isActive = true
+        
+        errorLabel.isHidden = true
+    }
 
     func setupTestButtonLabel() {
         testButton.setTitle("Click me!", for: .normal)
@@ -149,6 +193,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
         trashButton.addTarget(self, action: #selector(didTapTrashButton(_:)), for: .touchUpInside)
         trashButton.setImage(UIImage(systemName: "trash"),for: .normal)
         trashButton.tintColor = .systemRed
+        trashButton.tag = cities.firstIndex(of: city)!
         trashButton.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(trashButton)
         button.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
@@ -165,19 +210,33 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
         locatiesLabel.text = "Jouw locaties"
         locatiesLabel.translatesAutoresizingMaskIntoConstraints = false
         locatiesLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8).isActive = true
-        locatiesLabel.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 40).isActive = true
+        locatiesLabel.topAnchor.constraint(equalTo: searchBarContainer.bottomAnchor, constant: 40).isActive = true
     }
     
     func setupSearchBar() {
-        view.addSubview(searchBar)
+        searchBar.searchResultsUpdater = self
+        searchBar.obscuresBackgroundDuringPresentation = false
+        searchBar.searchBar.placeholder = "Geef een stad in"
+        searchBar.searchBar.delegate = self
         
-        searchBar.placeholder = "Geef een stad in"
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
-        searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        searchBar.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 8).isActive = true
+        searchBarContainer.addSubview(searchBar.searchBar)
+        view.addSubview(searchBarContainer)
         
-        searchBar.layer.cornerRadius = 10
+        searchBar.searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBarContainer.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.searchBar.leadingAnchor.constraint(equalTo: searchBarContainer.leadingAnchor).isActive = true
+        searchBar.searchBar.trailingAnchor.constraint(equalTo: searchBarContainer.trailingAnchor).isActive = true
+        searchBar.searchBar.topAnchor.constraint(equalTo: searchBarContainer.topAnchor).isActive = true
+        searchBar.searchBar.bottomAnchor.constraint(equalTo: searchBarContainer.bottomAnchor).isActive = true
+        
+        searchBarContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        searchBarContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        searchBarContainer.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor,constant: 8).isActive = true
+        searchBarContainer.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        
+        
+        navigationItem.searchController = searchBar
+        definesPresentationContext = true
         
     }
     
@@ -210,12 +269,12 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
     }
     
     @objc func didTapCityButton(_ sender: UIButton) {
-        let cityVC = CityViewController(city: cities[0])
+        let cityVC = CityViewController(city: cities[sender.tag])
         navigationController?.pushViewController(cityVC, animated: true)
     }
     
     @objc func didTapTrashButton(_ sender: UIButton) {
-        // self.cities.remove() TODO
+        self.cities.remove(at: sender.tag)
         stackView.removeArrangedSubview(sender.superview!)
         sender.superview?.removeFromSuperview()
     }
@@ -230,6 +289,10 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate   {
             {
                 let feed=NSString(data: data!, encoding: String.Encoding.utf8.rawValue)! as String
                 var xml = SWXMLHash.parse(feed)
+                if let errorElement = xml["error"].element {
+                    completion(nil)
+                    return
+                }
                 xml = xml["root"]
                 let region = xml["location"]["region"].element!.text
                 let country = xml["location"]["country"].element!.text
