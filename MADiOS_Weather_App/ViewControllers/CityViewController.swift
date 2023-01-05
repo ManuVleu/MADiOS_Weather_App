@@ -11,6 +11,19 @@ import UIKit
 class CityViewController: UIViewController {
     var city: City
     
+    let cityLabel = UILabel()
+    let regionLabel = UILabel()
+    let countryLabel = UILabel()
+    
+    let timeLabel = UILabel()
+    let tempLabel = UILabel()
+    let conditionLabel = UILabel()
+    let windkphLabel = UILabel()
+    let windDirectionLabel = UILabel()
+    let humidityLabel = UILabel()
+    let cloudLabel = UILabel()
+    
+    
     init(city: City) {
         self.city = city
         super.init(nibName: nil, bundle: nil)
@@ -26,11 +39,14 @@ class CityViewController: UIViewController {
         view.backgroundColor = .systemBackground
         title = city.name
         
-        let label = UILabel()
-        label.text = "Welcome to \(city.name)"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(label)
-        label.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        setupCityLabels()
+        
+        setupTempLabel()
+        
+        setupWeatherDetails()
+    }
+    
+    func setupCityLabels() {
+        
     }
 }
