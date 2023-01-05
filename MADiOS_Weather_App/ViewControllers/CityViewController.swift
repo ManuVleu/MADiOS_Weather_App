@@ -9,6 +9,13 @@ import Foundation
 import UIKit
 
 class CityViewController: UIViewController {
+    /*
+     Vraag: Vanaf welke temperatuur begin je warm te krijgen?
+     Persoon: "Dokter" Daan
+     Date: 05/01/2023
+     */
+    let LAUWE_TEMP: Float = 23.0
+    
     var city: City
     
     let cityStackView = UIStackView()
@@ -39,13 +46,8 @@ class CityViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [UIColor.red.cgColor, UIColor.yellow.cgColor]
-        gradientLayer.locations = [0,1]
-        gradientLayer.frame = view.bounds
-        view.layer.addSublayer(gradientLayer)
+        setupGradientBackground()
         
-        // view.backgroundColor = .systemBackground
         title = city.name
         
         setupCityLabels()
@@ -53,6 +55,43 @@ class CityViewController: UIViewController {
         setupTempLabel()
         
         setupWeatherDetails()
+    }
+    
+    func setupGradientBackground() {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.locations = [0,1]
+        gradientLayer.frame = view.bounds
+        
+        
+        if self.city.weather.temperature > self.LAUWE_TEMP {
+            // Warm
+            gradientLayer.colors = [UIColor.red.cgColor, UIColor.yellow.cgColor]
+            cityLabel.textColor = .darkGray
+            regionLabel.textColor = .darkGray
+            countryLabel.textColor = .darkGray
+            tempLabel.textColor = .darkGray
+            timeLabel.textColor = .darkGray
+            conditionLabel.textColor = .darkGray
+            windkphLabel.textColor = .darkGray
+            windDirectionLabel.textColor = .darkGray
+            humidityLabel.textColor = .darkGray
+            cloudLabel.textColor = .darkGray
+        } else {
+            // Kou
+            gradientLayer.colors = [UIColor.blue.cgColor, UIColor.purple.cgColor]
+            cityLabel.textColor = .lightGray
+            regionLabel.textColor = .lightGray
+            countryLabel.textColor = .lightGray
+            tempLabel.textColor = .lightGray
+            timeLabel.textColor = .lightGray
+            conditionLabel.textColor = .lightGray
+            windkphLabel.textColor = .lightGray
+            windDirectionLabel.textColor = .lightGray
+            humidityLabel.textColor = .lightGray
+            cloudLabel.textColor = .lightGray
+        }
+        
+        view.layer.addSublayer(gradientLayer)
     }
     
     func setupCityLabels() {
@@ -97,7 +136,15 @@ class CityViewController: UIViewController {
     }
     
     func setupTempLabel() {
-        //tempLabel.text
+        view.addSubview(tempLabel)
+        tempLabel.text = "\(self.city.weather.temperature)°"
+        tempLabel.font = UIFont.systemFont(ofSize: 35)
+        
+        //constraints
+        tempLabel.translatesAutoresizingMaskIntoConstraints = false
+        tempLabel.topAnchor.constraint(equalTo: cityStackView.bottomAnchor, constant: 75).isActive = true
+        tempLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
     }
     
     func setupWeatherDetails() {
