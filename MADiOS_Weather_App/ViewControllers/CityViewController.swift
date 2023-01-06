@@ -18,6 +18,8 @@ class CityViewController: UIViewController {
     
     var city: City
     
+    let favoriteButton = UIButton()
+    
     let cityStackView = UIStackView()
     let regionCountryStackView = UIStackView()
     let conditionIcon = UIImageView()
@@ -25,6 +27,7 @@ class CityViewController: UIViewController {
     let regionLabel = UILabel()
     let countryLabel = UILabel()
     
+    let weatherStackView = UIStackView()
     let timeLabel = UILabel()
     let tempLabel = UILabel()
     let conditionLabel = UILabel()
@@ -50,11 +53,26 @@ class CityViewController: UIViewController {
         
         title = city.name
         
+        setupFavoriteButton()
+        
         setupCityLabels()
         
         setupTempLabel()
         
         setupWeatherDetails()
+    }
+    
+    func setupFavoriteButton() {
+        view.addSubview(favoriteButton)
+        
+        // favoriteButton.setTitle("Favorite", for: .normal)
+        favoriteButton.setImage(UIImage(systemName: "star"), for: .normal)
+        favoriteButton.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
+        
+        //constraints
+        favoriteButton.translatesAutoresizingMaskIntoConstraints = false
+        favoriteButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
+        favoriteButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10).isActive = true
     }
     
     func setupGradientBackground() {
@@ -110,6 +128,7 @@ class CityViewController: UIViewController {
         cityStackView.addArrangedSubview(conditionIcon)
         cityStackView.addArrangedSubview(cityLabel)
         cityStackView.addArrangedSubview(regionCountryStackView)
+        cityStackView.addArrangedSubview(conditionLabel)
         view.addSubview(cityStackView)
         
         cityLabel.text = city.name
@@ -119,10 +138,12 @@ class CityViewController: UIViewController {
             regionLabel.text = city.region + ", "
         }
         countryLabel.text = city.country
+        conditionLabel.text = city.weather.condition
         
         cityLabel.font = UIFont(name: "Avenir-Heavy", size: 20)
         regionLabel.font = UIFont(name: "Avenir", size: 15)
         countryLabel.font = UIFont(name: "Avenir", size: 15)
+        conditionLabel.font = UIFont(name: "Avenir", size: 20)
         
         // constraints
         cityStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -150,6 +171,39 @@ class CityViewController: UIViewController {
     func setupWeatherDetails() {
         let systemName: String = self.getConditionIconName()
         conditionIcon.image = UIImage(systemName: systemName)
+        
+        weatherStackView.axis = .vertical
+        weatherStackView.alignment = .fill
+        weatherStackView.distribution = .equalSpacing
+        
+        weatherStackView.addArrangedSubview(timeLabel)
+        weatherStackView.addArrangedSubview(windkphLabel)
+        weatherStackView.addArrangedSubview(windDirectionLabel)
+        weatherStackView.addArrangedSubview(humidityLabel)
+        weatherStackView.addArrangedSubview(cloudLabel)
+        
+        view.addSubview(weatherStackView)
+        
+        timeLabel.text = "Local Time: \(city.weather.localtime)"
+        windkphLabel.text = "Wind Speed: \(city.weather.windKpH) kpH"
+        windDirectionLabel.text = "Wind Direction: \(city.weather.windDirection)"
+        humidityLabel.text = "Humidity Percentage: \(city.weather.humidityPerc)%"
+        cloudLabel.text = "Cloud Percentage: \(city.weather.cloudPerc)%"
+        
+        timeLabel.font = UIFont(name: "Avenir-Heavy", size: 20)
+        
+        // constraints
+        weatherStackView.translatesAutoresizingMaskIntoConstraints = false
+        windkphLabel.translatesAutoresizingMaskIntoConstraints = false
+        windDirectionLabel.translatesAutoresizingMaskIntoConstraints = false
+        humidityLabel.translatesAutoresizingMaskIntoConstraints = false
+        timeLabel.translatesAutoresizingMaskIntoConstraints = false
+        cloudLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        weatherStackView.topAnchor.constraint(equalTo: tempLabel.bottomAnchor,constant: 55).isActive = true
+        
+        windkphLabel.topAnchor.constraint(equalTo: timeLabel.bottomAnchor,constant: 10).isActive = true
+        
     }
     
     func getConditionIconName() -> String {
@@ -181,5 +235,9 @@ class CityViewController: UIViewController {
         
         return "sun.min"
         
+    }
+    
+    @objc func favoriteButtonTapped() {
+        print("fav tapped")
     }
 }
