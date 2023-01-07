@@ -7,7 +7,7 @@ protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
 }
 
-class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchResultsUpdating, UISearchBarDelegate {
+class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchResultsUpdating, UISearchBarDelegate, CityViewControllerDelegate {
     
     //executes evertime sometihing is typed in searchbar
     func updateSearchResults(for searchController: UISearchController) {
@@ -21,7 +21,8 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         self.getAPIData(cityName: searchText) {
             city in
             if let city = city {
-                let cityVC = CityViewController(city: city)
+                let cityVC = CityViewController(city: city, cities: self.cities)
+                cityVC.delegate = self
                 // self.cities.append(city)
                 DispatchQueue.main.async {
                     self.errorLabel.isHidden = true
@@ -88,6 +89,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
     let testButton = UIButton(type: .system)
     let testLabel = UILabel()
     let stackView = UIStackView()
+    let scrollView = UIScrollView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -99,7 +101,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         locationManager.requestLocation()
 
         // Do any additional setup after loading the view.
-        view.backgroundColor = .systemBackground
+        setupBackground()
         title = "Home"
         
         //MenuButton
@@ -122,19 +124,36 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         //CollectionView voor locaties
         setupStackView()
         
-        
+        updateUI()
+    }
+    
+    func updateCities(_ cities: [City]) {
+        self.cities = cities
+        self.updateUI()
     }
     
     func updateUI() {
         self.testLabel.text = self.detectedCity
         self.errorLabel.isHidden = true
-        updateStackView()
+        self.updateStackView()
     }
     
     func updateStackView() {
-        for city in cities {
-            addCityStackView(city: city)
+        for view in stackView.arrangedSubviews {
+            stackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
         }
+        for city in cities {
+            self.addCityStackView(city: city)
+        }
+    }
+    
+    func setupBackground() {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.locations = [0,1]
+        gradientLayer.frame = view.bounds
+        gradientLayer.colors = [self.color(fromHexString: "#E4EfE9")!.cgColor,self.color(fromHexString: "#93A5CF")!.cgColor]
+        view.layer.addSublayer(gradientLayer)
     }
     
     func setupErrorLabel() {
@@ -177,6 +196,15 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         for city in cities {
             addCityStackView(city: city)
         }
+        
+        view.addSubview(scrollView)
+        scrollView.addSubview(stackView)
+        
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        scrollView.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor, constant: 8).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
     
     func addCityStackView(city: City) {
@@ -211,6 +239,16 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         locatiesLabel.translatesAutoresizingMaskIntoConstraints = false
         locatiesLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8).isActive = true
         locatiesLabel.topAnchor.constraint(equalTo: searchBarContainer.bottomAnchor, constant: 40).isActive = true
+        
+        let lineView = UIView()
+        view.addSubview(lineView)
+        
+        lineView.backgroundColor = .gray
+        lineView.translatesAutoresizingMaskIntoConstraints = false
+        lineView.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        lineView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
+        lineView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
+        lineView.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor, constant: 4).isActive = true
     }
     
     func setupSearchBar() {
@@ -262,6 +300,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
     // "".fill
     @objc func didTapMenuButton() {
         delegate?.didTapMenuButton()
+        self.updateUI()
     }
 
     @objc func didTapButton() {
@@ -269,7 +308,8 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
     }
     
     @objc func didTapCityButton(_ sender: UIButton) {
-        let cityVC = CityViewController(city: cities[sender.tag])
+        let cityVC = CityViewController(city: cities[sender.tag], cities: self.cities)
+        cityVC.delegate = self
         navigationController?.pushViewController(cityVC, animated: true)
     }
     
@@ -277,6 +317,22 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         self.cities.remove(at: sender.tag)
         stackView.removeArrangedSubview(sender.superview!)
         sender.superview?.removeFromSuperview()
+    }
+    
+    func color(fromHexString hexString: String) -> UIColor? {
+        let hex = hexString.hasPrefix("#") ? String(hexString.dropFirst()) : hexString
+        
+        guard hex.count == 6,
+              let hexValue = Int(hex, radix: 16) else {
+            return nil
+        }
+        
+        return UIColor(
+            red: CGFloat((hexValue >> 16) & 0xFF) / 255.0,
+            green: CGFloat((hexValue >> 8) & 0xFF) / 255.0,
+            blue: CGFloat(hexValue & 0xFF) / 255.0,
+            alpha: 1.0
+        )
     }
 
     func getAPIData(cityName: String, completion: @escaping (City?) -> ()) {

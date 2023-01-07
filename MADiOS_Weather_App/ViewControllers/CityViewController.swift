@@ -16,7 +16,10 @@ class CityViewController: UIViewController {
      */
     let LAUWE_TEMP: Float = 23.0
     
+    weak var delegate: CityViewControllerDelegate?
+    
     var city: City
+    var cities: [City]
     
     let favoriteButton = UIButton()
     
@@ -37,8 +40,9 @@ class CityViewController: UIViewController {
     let cloudLabel = UILabel()
     
     
-    init(city: City) {
+    init(city: City, cities: [City]) {
         self.city = city
+        self.cities = cities
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -65,8 +69,11 @@ class CityViewController: UIViewController {
     func setupFavoriteButton() {
         view.addSubview(favoriteButton)
         
-        // favoriteButton.setTitle("Favorite", for: .normal)
-        favoriteButton.setImage(UIImage(systemName: "star"), for: .normal)
+        if cities.contains(city) {
+            favoriteButton.setImage(UIImage(systemName: "star.fill"), for: .normal)
+        } else {
+            favoriteButton.setImage(UIImage(systemName: "star"), for: .normal)
+        }
         favoriteButton.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
         
         //constraints
@@ -97,6 +104,21 @@ class CityViewController: UIViewController {
         } else {
             // Kou
             gradientLayer.colors = [UIColor.blue.cgColor, UIColor.purple.cgColor]
+            cityLabel.textColor = .lightGray
+            regionLabel.textColor = .lightGray
+            countryLabel.textColor = .lightGray
+            tempLabel.textColor = .lightGray
+            timeLabel.textColor = .lightGray
+            conditionLabel.textColor = .lightGray
+            windkphLabel.textColor = .lightGray
+            windDirectionLabel.textColor = .lightGray
+            humidityLabel.textColor = .lightGray
+            cloudLabel.textColor = .lightGray
+        }
+        
+        if self.city.weather.condition.lowercased().contains("sunny") {
+            // Sunny
+            gradientLayer.colors = [UIColor.orange.cgColor, UIColor.yellow.cgColor]
             cityLabel.textColor = .lightGray
             regionLabel.textColor = .lightGray
             countryLabel.textColor = .lightGray
@@ -238,6 +260,16 @@ class CityViewController: UIViewController {
     }
     
     @objc func favoriteButtonTapped() {
-        print("fav tapped")
+        if cities.contains(city) {
+            cities.remove(at: cities.firstIndex(of: city)!)
+            delegate?.updateCities(cities)
+            favoriteButton.setImage(UIImage(systemName: "star"), for: .normal)
+        } else {
+            cities.append(city)
+            delegate?.updateCities(cities)
+            favoriteButton.setImage(UIImage(systemName: "star.fill"), for: .normal)
+        }
     }
+    
+    
 }
