@@ -101,6 +101,19 @@ class CityViewController: UIViewController {
             windDirectionLabel.textColor = .darkGray
             humidityLabel.textColor = .darkGray
             cloudLabel.textColor = .darkGray
+        } else if self.city.weather.condition.lowercased().contains("sunny") {
+            // Sunny
+            gradientLayer.colors = [UIColor.orange.cgColor, UIColor.yellow.cgColor]
+            cityLabel.textColor = .lightGray
+            regionLabel.textColor = .lightGray
+            countryLabel.textColor = .lightGray
+            tempLabel.textColor = .lightGray
+            timeLabel.textColor = .lightGray
+            conditionLabel.textColor = .lightGray
+            windkphLabel.textColor = .lightGray
+            windDirectionLabel.textColor = .lightGray
+            humidityLabel.textColor = .lightGray
+            cloudLabel.textColor = .lightGray
         } else {
             // Kou
             gradientLayer.colors = [UIColor.blue.cgColor, UIColor.purple.cgColor]
@@ -116,20 +129,6 @@ class CityViewController: UIViewController {
             cloudLabel.textColor = .lightGray
         }
         
-        if self.city.weather.condition.lowercased().contains("sunny") {
-            // Sunny
-            gradientLayer.colors = [UIColor.orange.cgColor, UIColor.yellow.cgColor]
-            cityLabel.textColor = .lightGray
-            regionLabel.textColor = .lightGray
-            countryLabel.textColor = .lightGray
-            tempLabel.textColor = .lightGray
-            timeLabel.textColor = .lightGray
-            conditionLabel.textColor = .lightGray
-            windkphLabel.textColor = .lightGray
-            windDirectionLabel.textColor = .lightGray
-            humidityLabel.textColor = .lightGray
-            cloudLabel.textColor = .lightGray
-        }
         
         view.layer.addSublayer(gradientLayer)
     }

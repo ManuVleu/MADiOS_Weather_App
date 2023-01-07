@@ -66,9 +66,11 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
     }
     
     weak var delegate: HomeViewControllerDelegate?
+    var isDarkMode = false
     let locationManager = CLLocationManager()
     let authLocationStatus = CLLocationManager.authorizationStatus()
     let geocoder = CLGeocoder()
+    let gradientLayer = CAGradientLayer()
     var detectedCity = ""
     var cities = [City]() {
         didSet {
@@ -101,11 +103,15 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         locationManager.requestLocation()
 
         // Do any additional setup after loading the view.
-        setupBackground()
+        setBackground()
+        view.layer.addSublayer(gradientLayer)
         title = "Home"
         
         //MenuButton
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3.circle"), style: .done, target: self, action: #selector(didTapMenuButton))
+        
+        //Themebutton
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "lightbulb.circle.fill"), style: .done, target: self, action: #selector(didTapThemeButton))
         
         //welcomeLabel that adapts to the time of day
         setupWelcomeLabel()
@@ -148,12 +154,18 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         }
     }
     
-    func setupBackground() {
-        let gradientLayer = CAGradientLayer()
+    func setBackground() {
+        
+        let lightColors = [self.color(fromHexString: "#E4EfE9")!.cgColor,self.color(fromHexString: "#93A5CF")!.cgColor]
+        let darkColors = [self.color(fromHexString: "#09203F")!.cgColor,self.color(fromHexString: "#537895")!.cgColor]
         gradientLayer.locations = [0,1]
         gradientLayer.frame = view.bounds
-        gradientLayer.colors = [self.color(fromHexString: "#E4EfE9")!.cgColor,self.color(fromHexString: "#93A5CF")!.cgColor]
-        view.layer.addSublayer(gradientLayer)
+        if isDarkMode {
+            gradientLayer.colors = darkColors
+        } else {
+            gradientLayer.colors = lightColors
+        }
+        
     }
     
     func setupErrorLabel() {
@@ -296,11 +308,25 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         
     }
     
+    
     // line.horizontal.3.circle
     // "".fill
     @objc func didTapMenuButton() {
         delegate?.didTapMenuButton()
         self.updateUI()
+    }
+    
+    @objc func didTapThemeButton(_ sender: UIButton) {
+        
+        if !isDarkMode {
+            isDarkMode = true
+            sender.setImage(UIImage(systemName: "lightbulb.circle"), for: .normal)
+        } else {
+            isDarkMode = false
+            sender.setImage(UIImage(systemName: "lightbulb.circle.fill"), for: .normal)
+        }
+        
+        setBackground()
     }
 
     @objc func didTapButton() {
