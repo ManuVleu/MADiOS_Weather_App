@@ -190,7 +190,7 @@ class CityViewController: UIViewController {
     }
     
     func setupWeatherDetails() {
-        let systemName: String = self.getConditionIconName()
+        let systemName: String = self.city.weather.getConditionIconName()
         conditionIcon.image = UIImage(systemName: systemName)
         
         weatherStackView.axis = .vertical
@@ -224,37 +224,6 @@ class CityViewController: UIViewController {
         weatherStackView.topAnchor.constraint(equalTo: tempLabel.bottomAnchor,constant: 55).isActive = true
         
         windkphLabel.topAnchor.constraint(equalTo: timeLabel.bottomAnchor,constant: 10).isActive = true
-        
-    }
-    
-    func getConditionIconName() -> String {
-        let condition: String = self.city.weather.condition.lowercased()
-        
-        if condition.contains("sunny") || condition.contains("clear") {
-            return "sun.max"
-        } else if condition.contains("cloudy") || condition.contains("overcast") {
-            return "cloud"
-        } else if condition.contains("mist") || condition.contains("fog") {
-            return "cloud.fog"
-        } else if condition.contains("rain") {
-            return "cloud.rain"
-        } else if condition.contains("snow") {
-            return "cloud.snow"
-        } else if condition.contains("blizzard") {
-            return "wind.snow"
-        } else if condition.contains("ice pellets") {
-            return "snowflake"
-        } else if condition.contains("rain") && condition.contains("thunder") {
-            return "cloud.bolt.rain"
-        } else if condition.contains("thunder") {
-            return "cloud.bolt"
-        } else if condition.contains("drizzle") {
-            return "cloud.drizzle"
-        } else if condition.contains("sleet") {
-            return "cloud.sleeet"
-        }
-        
-        return "sun.min"
         
     }
     

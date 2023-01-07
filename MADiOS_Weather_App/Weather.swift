@@ -29,6 +29,37 @@ class Weather {
         self.humidityPerc = humidityPerc
         self.cloudPerc = cloudPerc
     }
+    
+    func getConditionIconName() -> String {
+        let condition: String = self.condition.lowercased()
+        
+        if condition.contains("sunny") || condition.contains("clear") {
+            return "sun.max"
+        } else if condition.contains("cloudy") || condition.contains("overcast") {
+            return "cloud"
+        } else if condition.contains("mist") || condition.contains("fog") {
+            return "cloud.fog"
+        } else if condition.contains("rain") {
+            return "cloud.rain"
+        } else if condition.contains("snow") {
+            return "cloud.snow"
+        } else if condition.contains("blizzard") {
+            return "wind.snow"
+        } else if condition.contains("ice pellets") {
+            return "snowflake"
+        } else if condition.contains("rain") && condition.contains("thunder") {
+            return "cloud.bolt.rain"
+        } else if condition.contains("thunder") {
+            return "cloud.bolt"
+        } else if condition.contains("drizzle") {
+            return "cloud.drizzle"
+        } else if condition.contains("sleet") {
+            return "cloud.sleet"
+        }
+        
+        return "sun.min"
+        
+    }
 
     func toString() -> String {
         var weatherStr = ""

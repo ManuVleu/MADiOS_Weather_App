@@ -52,12 +52,12 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
                 
                 if let placemarks = placemarks {
                     let placemark = placemarks[0]
-                    self.detectedCity = "\(placemark.locality!)"
-                    self.getAPIData(cityName: self.detectedCity) {
+                    self.getAPIData(cityName: placemark.locality!) {
                         response in
                         if let response = response {
                             let city = response
                             self.cities.append(city)
+                            self.detectedCity = city
                         }
                     }
                 }
@@ -71,7 +71,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
     let authLocationStatus = CLLocationManager.authorizationStatus()
     let geocoder = CLGeocoder()
     let gradientLayer = CAGradientLayer()
-    var detectedCity = ""
+    var detectedCity = City
     var cities = [City]() {
         didSet {
             if oldValue.count != cities.count {
@@ -85,11 +85,13 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
     
     let welcomeLabel = UILabel()
     let errorLabel = UILabel()
+    let weatherStackView = UIStackView()
+    let conditionIcon = UIImageView()
+    let conditionLabel = UILabel()
+    let tempLabel = UILabel()
     let locatiesLabel = UILabel()
     let searchBar = UISearchController(searchResultsController: nil)
     let searchBarContainer = UIView()
-    let testButton = UIButton(type: .system)
-    let testLabel = UILabel()
     let stackView = UIStackView()
     let scrollView = UIScrollView()
 
@@ -122,6 +124,9 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         //searchBar voor cities
         setupSearchBar()
         
+        //detectedCity weather
+        setupLocalWeatherLabels()
+        
         //Jouw locaties-label
         setupJouwLocatiesLabel()
         
@@ -139,7 +144,6 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
     }
     
     func updateUI() {
-        self.testLabel.text = self.detectedCity
         self.errorLabel.isHidden = true
         self.updateStackView()
     }
@@ -178,22 +182,6 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         errorLabel.widthAnchor.constraint(equalTo: welcomeLabel.widthAnchor).isActive = true
         
         errorLabel.isHidden = true
-    }
-
-    func setupTestButtonLabel() {
-        testButton.setTitle("Click me!", for: .normal)
-        testButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(testButton)
-        testButton.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        testButton.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        testButton.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor, constant: 8).isActive = true
-        testButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
-        
-        view.addSubview(testLabel)
-        testLabel.text = detectedCity
-        testLabel.translatesAutoresizingMaskIntoConstraints = false
-        testLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8).isActive = true
-        testLabel.topAnchor.constraint(equalTo: testButton.bottomAnchor, constant: 20).isActive = true
     }
     
     func setupStackView() {
@@ -243,6 +231,20 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         trashButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         
         containerView.heightAnchor.constraint(equalToConstant: 44).isActive = true
+    }
+    
+    func setupLocalWeatherLabels() {
+        weatherStackView.axis = .vertical
+        weatherStackView.distribution = .fillEqually
+        view.addSubview(weatherStackView)
+        
+        weatherStackView.addArrangedSubview(conditionIcon)
+        weatherStackView.addArrangedSubview(conditionLabel)
+        weatherStackView.addArrangedSubview(tempLabel)
+        
+        conditionIcon.image = UIImage(systemName: self.detectedCity.weather.getConditionIconName(), for: .normal)
+        conditionLabel.text = self.detectedCity.name
+        tempLabel.text = "\(self.detectedCity.weather.temperature)"
     }
     
     func setupJouwLocatiesLabel() {
@@ -316,21 +318,19 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         self.updateUI()
     }
     
-    @objc func didTapThemeButton(_ sender: UIButton) {
+    @objc func didTapThemeButton() {
         
         if !isDarkMode {
             isDarkMode = true
-            sender.setImage(UIImage(systemName: "lightbulb.circle"), for: .normal)
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "lightbulb.circle"), style: .done, target: self, action: #selector(didTapThemeButton))
         } else {
             isDarkMode = false
-            sender.setImage(UIImage(systemName: "lightbulb.circle.fill"), for: .normal)
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "lightbulb.circle.fill"), style: .done, target: self, action: #selector(didTapThemeButton))
         }
         
-        setBackground()
-    }
-
-    @objc func didTapButton() {
-        self.testLabel.text = self.detectedCity
+        DispatchQueue.main.async {
+            self.setBackground()
+        }
     }
     
     @objc func didTapCityButton(_ sender: UIButton) {
