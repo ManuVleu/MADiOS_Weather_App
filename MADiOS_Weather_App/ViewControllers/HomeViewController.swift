@@ -52,12 +52,17 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
                 
                 if let placemarks = placemarks {
                     let placemark = placemarks[0]
+                    self.detectedCityName = "\(placemark.locality!)"
                     self.getAPIData(cityName: placemark.locality!) {
                         response in
                         if let response = response {
                             let city = response
                             self.cities.append(city)
-                            self.detectedCity = city
+                            DispatchQueue.main.async {
+                                self.conditionIcon.image = UIImage(systemName: city.weather.getConditionIconName())
+                                self.conditionLabel.text = city.name
+                                self.tempLabel.text = "\(city.weather.temperature)"
+                            }
                         }
                     }
                 }
@@ -71,7 +76,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
     let authLocationStatus = CLLocationManager.authorizationStatus()
     let geocoder = CLGeocoder()
     let gradientLayer = CAGradientLayer()
-    var detectedCity = City
+    var detectedCityName = ""
     var cities = [City]() {
         didSet {
             if oldValue.count != cities.count {
@@ -166,8 +171,12 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         gradientLayer.frame = view.bounds
         if isDarkMode {
             gradientLayer.colors = darkColors
+            welcomeLabel.textColor = .white
+            locatiesLabel.textColor = .white
         } else {
             gradientLayer.colors = lightColors
+            welcomeLabel.textColor = .black
+            locatiesLabel.textColor = .black
         }
         
     }
@@ -242,9 +251,13 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         weatherStackView.addArrangedSubview(conditionLabel)
         weatherStackView.addArrangedSubview(tempLabel)
         
-        conditionIcon.image = UIImage(systemName: self.detectedCity.weather.getConditionIconName(), for: .normal)
-        conditionLabel.text = self.detectedCity.name
-        tempLabel.text = "\(self.detectedCity.weather.temperature)"
+        weatherStackView.translatesAutoresizingMaskIntoConstraints = false
+        conditionIcon.translatesAutoresizingMaskIntoConstraints = false
+        conditionLabel.translatesAutoresizingMaskIntoConstraints = false
+        tempLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        weatherStackView.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 8).isActive = true
+
     }
     
     func setupJouwLocatiesLabel() {
