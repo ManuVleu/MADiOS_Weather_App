@@ -4,7 +4,7 @@ Een weerapp die het weer kan tonen van elke stad die je ingeeft.
 
 ## Start
 
-Start de app door MADiOS_Weather_App.xcworkspace te openen in Xcode.
+Start de app door MADiOS_Weather_App.xcworkspace te openen in Xcode. Bij het runnen van de app zal voor locatiepermissies gevraagd worden en kies dan voor de **Allow While Using App** optie. Bij de eerste run kan het zijn dat het de stad nog niet heeft gedetecteerd, dit kan opgelost worden door het opnieuw te runnen.
 
 ## Info
 
