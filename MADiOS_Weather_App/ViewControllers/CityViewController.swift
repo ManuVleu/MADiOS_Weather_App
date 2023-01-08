@@ -1,9 +1,3 @@
-//
-//  CityViewController.swift
-//  MADiOS_Weather_App
-//
-//  Created by Manu Vleurick on 03/01/2023.
-//
 
 import Foundation
 import UIKit
@@ -24,6 +18,7 @@ class CityViewController: UIViewController {
     var cities: [City]
     
     let gradientLayer = CAGradientLayer()
+    let scrollView = UIScrollView()
     
     let favoriteButton = UIButton()
     
@@ -72,6 +67,25 @@ class CityViewController: UIViewController {
         setupTempLabel()
         
         setupWeatherDetails()
+    }
+    
+    func setupScrollView() {
+        view.addSubview(scrollView)
+        
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        scrollView.addSubview(favoriteButton)
+        scrollView.addSubview(cityStackView)
+        scrollView.addSubview(regionCountryStackView)
+        scrollView.addSubview(conditionIcon)
+        scrollView.addSubview(weatherStackView)
+        
+        scrollView.contentSize = CGSize(width: view.bounds.width, height: 2000)
+        
     }
     
     func setupFavoriteButton() {
@@ -267,9 +281,11 @@ class CityViewController: UIViewController {
         if UIDevice.current.orientation.isLandscape {
             gradientLayer.locations = [0,1]
             gradientLayer.frame = view.bounds
+            setupScrollView()
         } else {
             gradientLayer.locations = [0,1]
             gradientLayer.frame = view.bounds
+            
         }
     }
     

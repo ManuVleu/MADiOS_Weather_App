@@ -383,11 +383,11 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
     
     @objc func deviceDidRotate() {
         if UIDevice.current.orientation.isLandscape {
-            setBackground()
-            setBackground()
+            gradientLayer.locations = [0,1]
+            gradientLayer.frame = view.bounds
         } else {
-            setBackground()
-            setBackground()
+            gradientLayer.locations = [0,1]
+            gradientLayer.frame = view.bounds
         }
     }
     

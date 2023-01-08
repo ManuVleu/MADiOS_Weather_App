@@ -1,9 +1,4 @@
-//
-//  InfoViewController.swift
-//  MADiOS_Weather_App
-//
-//  Created by Manu Vleurick on 27/12/2022.
-//
+
 
 import UIKit
 
