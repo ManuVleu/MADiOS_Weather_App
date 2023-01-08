@@ -7,13 +7,11 @@ protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
 }
 
-class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchResultsUpdating, UISearchBarDelegate, CityViewControllerDelegate {
-    
-    //executes evertime sometihing is typed in searchbar
+class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchBarDelegate, CityViewControllerDelegate, UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        let searchText = searchBar.searchBar.text!
-        //print(searchText)
+        
     }
+    
     
     // executed only when you Enter
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -60,8 +58,8 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
                             self.cities.append(city)
                             DispatchQueue.main.async {
                                 self.conditionIcon.image = UIImage(systemName: city.weather.getConditionIconName())
-                                self.conditionLabel.text = city.name
-                                self.tempLabel.text = "\(city.weather.temperature)"
+                                self.conditionLabel.text = city.weather.condition
+                                self.tempLabel.text = "\(city.weather.temperature)°"
                             }
                         }
                     }
@@ -135,10 +133,11 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         //Jouw locaties-label
         setupJouwLocatiesLabel()
         
-        // setupTestButtonLabel()
-        
-        //CollectionView voor locaties
+        //StackView voor locaties
         setupStackView()
+        
+        //Scrollable screen
+        setupScrollView()
         
         updateUI()
     }
@@ -173,10 +172,14 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
             gradientLayer.colors = darkColors
             welcomeLabel.textColor = .white
             locatiesLabel.textColor = .white
+            conditionLabel.textColor = .lightGray
+            tempLabel.textColor = .lightGray
         } else {
             gradientLayer.colors = lightColors
             welcomeLabel.textColor = .black
             locatiesLabel.textColor = .black
+            conditionLabel.textColor = .darkGray
+            tempLabel.textColor = .darkGray
         }
         
     }
@@ -199,21 +202,41 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         stackView.distribution = .fillEqually
         view.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8).isActive = true
         stackView.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor, constant: 8).isActive = true
         for city in cities {
             addCityStackView(city: city)
         }
-        
+    }
+    
+    func setupScrollView() {
+        self.scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
-        scrollView.addSubview(stackView)
         
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        scrollView.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor, constant: 8).isActive = true
+        scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        scrollView.addSubview(welcomeLabel)
+        scrollView.addSubview(errorLabel)
+        scrollView.addSubview(weatherStackView)
+        scrollView.addSubview(locatiesLabel)
+        scrollView.addSubview(searchBarContainer)
+        scrollView.addSubview(stackView)
+        
+        welcomeLabel.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        errorLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor).isActive = true
+        weatherStackView.topAnchor.constraint(equalTo: errorLabel.bottomAnchor).isActive = true
+        locatiesLabel.topAnchor.constraint(equalTo: weatherStackView.bottomAnchor).isActive = true
+        searchBarContainer.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor).isActive = true
+        stackView.topAnchor.constraint(equalTo: searchBarContainer.bottomAnchor).isActive = true
+        stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
+        
+        let contentWidth = view.bounds.width
+        let contentHeight = stackView.frame.maxY
+        scrollView.contentSize = CGSize(width: contentWidth, height: contentHeight)
     }
     
     func addCityStackView(city: City) {
@@ -224,6 +247,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
         button.setTitle(city.name, for: .normal)
         button.addTarget(self,action: #selector(didTapCityButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.tag = cities.firstIndex(of: city)!
         containerView.addSubview(button)
         let trashButton = UIButton(type: .system)
         trashButton.setTitle("Trash", for: .normal)
@@ -245,18 +269,23 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchR
     func setupLocalWeatherLabels() {
         weatherStackView.axis = .vertical
         weatherStackView.distribution = .fillEqually
+        weatherStackView.alignment = .center
         view.addSubview(weatherStackView)
         
         weatherStackView.addArrangedSubview(conditionIcon)
         weatherStackView.addArrangedSubview(conditionLabel)
         weatherStackView.addArrangedSubview(tempLabel)
         
+        conditionLabel.font = UIFont.systemFont(ofSize: 14)
+        tempLabel.font = UIFont.systemFont(ofSize: 14)
+        
         weatherStackView.translatesAutoresizingMaskIntoConstraints = false
         conditionIcon.translatesAutoresizingMaskIntoConstraints = false
         conditionLabel.translatesAutoresizingMaskIntoConstraints = false
         tempLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        weatherStackView.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 8).isActive = true
+        weatherStackView.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 12).isActive = true
+        weatherStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
 
     }
     

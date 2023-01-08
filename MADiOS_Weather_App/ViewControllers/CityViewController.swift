@@ -233,11 +233,21 @@ class CityViewController: UIViewController {
             delegate?.updateCities(cities)
             favoriteButton.setImage(UIImage(systemName: "star"), for: .normal)
         } else {
+            if self.cities.count >= 2 {
+                showErrorMessage(message: "To many favorite cities")
+            }else{
             cities.append(city)
             delegate?.updateCities(cities)
             favoriteButton.setImage(UIImage(systemName: "star.fill"), for: .normal)
+            }
         }
     }
     
+    func showErrorMessage(message: String) {
+        let alertController = UIAlertController(title: "Error",message: message,preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK",style: .default,handler: nil)
+        alertController.addAction(action)
+        present(alertController,animated: true,completion: nil)
+    }
     
 }
