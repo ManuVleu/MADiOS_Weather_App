@@ -98,6 +98,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.modalPresentationStyle = .overFullScreen
         
         locationManager.delegate = self
         
@@ -142,6 +143,31 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
         setupScrollView()
         
         updateUI()
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        if traitCollection.horizontalSizeClass == .compact {
+            print("compact")
+        } else if traitCollection.horizontalSizeClass == .regular {
+            print("regular")
+        } else {
+            print("big")
+        }
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        if traitCollection.horizontalSizeClass == .compact {
+            print("trans compact")
+        } else if traitCollection.horizontalSizeClass == .regular {
+            print("trans regular")
+            searchBarContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 100).isActive = true
+        } else {
+            print("trans big")
+        }
     }
     
     func updateCities(_ cities: [City]) {
@@ -328,7 +354,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
         welcomeLabel.translatesAutoresizingMaskIntoConstraints = false
         welcomeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         welcomeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8).isActive = true
-        welcomeLabel.text = "Welcome"
+        welcomeLabel.text = "City could not be detected"
         
     }
     
