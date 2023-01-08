@@ -2,11 +2,15 @@
 
 Een weerapp dat het weer kan tonen van elke stad die je meegeeft.
 
+## Start
+
+Start de app door MADiOS_Weather_App.xcworkspace te openen in Xcode.
+
 ## Info
 
 ![Shower](./images/homepage_shower.PNG)
 
-Dit is een iOS app gemaakt in Xcode 13.1 in een macOS Monterey VM. De app maakt gebruikt van de [WeatherAPI](https://www.weatherapi.com/) API. 
+Dit is een iOS app gemaakt in Xcode 13.1 in een macOS Monterey VM. De app maakt gebruikt van de [WeatherAPI](https://www.weatherapi.com/) API. Er wordt gebruikt gemaakt van CocaoPods voor de SWXMLHash Library omdat de API response in een XML-formaat gegeven wordt.
 
 ## Features
 
