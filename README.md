@@ -37,6 +37,3 @@ Als je een verkeerde stad ingeeft of als je meer dan 8 steden probeert toe te vo
 ![Error verkeerde stad](./images/error_no_city_found.PNG)
 
 ![Error te veel steden](./images/error_to_many_cities.PNG)
-
-## Errors
-
