@@ -49,6 +49,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
                 if let placemarks = placemarks {
                     let placemark = placemarks[0]
                     self.detectedCityName = "\(placemark.locality!)"
+                    self.welcomeLabel.text = self.detectedCityName
                     self.getAPIData(cityName: placemark.locality!) {
                         response in
                         if let response = response {
@@ -107,7 +108,14 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
         // Do any additional setup after loading the view.
         setBackground()
         view.layer.addSublayer(gradientLayer)
-        title = "Home"
+        let hour = Calendar.current.component(.hour, from: Date())
+        if hour >= 5 && hour < 12 {
+            title = "Goedenmorgen"
+        } else if hour >= 12 && hour < 18 {
+            title = "Goedenmiddag"
+        } else {
+            title = "Goedenavond"
+        }
         
         //MenuButton
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3.circle"), style: .done, target: self, action: #selector(didTapMenuButton))
@@ -320,15 +328,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
         welcomeLabel.translatesAutoresizingMaskIntoConstraints = false
         welcomeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         welcomeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8).isActive = true
-        
-        let hour = Calendar.current.component(.hour, from: Date())
-        if hour >= 5 && hour < 12 {
-            welcomeLabel.text = "Goedenmorgen"
-        } else if hour >= 12 && hour < 18 {
-            welcomeLabel.text = "Goedenmiddag"
-        } else {
-            welcomeLabel.text = "Goedenavond"
-        }
+        welcomeLabel.text = "Welcome"
         
     }
     

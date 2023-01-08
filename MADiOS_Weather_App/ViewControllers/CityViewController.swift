@@ -16,6 +16,8 @@ class CityViewController: UIViewController {
      */
     let LAUWE_TEMP: Float = 23.0
     
+    var tempInCelcius = true
+    
     weak var delegate: CityViewControllerDelegate?
     
     var city: City
@@ -32,7 +34,9 @@ class CityViewController: UIViewController {
     
     let weatherStackView = UIStackView()
     let timeLabel = UILabel()
+    let tempStackView = UIStackView()
     let tempLabel = UILabel()
+    let tempSwitchButton = UIButton()
     let conditionLabel = UILabel()
     let windkphLabel = UILabel()
     let windDirectionLabel = UILabel()
@@ -104,16 +108,16 @@ class CityViewController: UIViewController {
         } else if self.city.weather.condition.lowercased().contains("sunny") {
             // Sunny
             gradientLayer.colors = [UIColor.orange.cgColor, UIColor.yellow.cgColor]
-            cityLabel.textColor = .lightGray
-            regionLabel.textColor = .lightGray
-            countryLabel.textColor = .lightGray
-            tempLabel.textColor = .lightGray
-            timeLabel.textColor = .lightGray
-            conditionLabel.textColor = .lightGray
-            windkphLabel.textColor = .lightGray
-            windDirectionLabel.textColor = .lightGray
-            humidityLabel.textColor = .lightGray
-            cloudLabel.textColor = .lightGray
+            cityLabel.textColor = .darkGray
+            regionLabel.textColor = .darkGray
+            countryLabel.textColor = .darkGray
+            tempLabel.textColor = .darkGray
+            timeLabel.textColor = .darkGray
+            conditionLabel.textColor = .darkGray
+            windkphLabel.textColor = .darkGray
+            windDirectionLabel.textColor = .darkGray
+            humidityLabel.textColor = .darkGray
+            cloudLabel.textColor = .darkGray
         } else {
             // Kou
             gradientLayer.colors = [UIColor.blue.cgColor, UIColor.purple.cgColor]
@@ -179,13 +183,22 @@ class CityViewController: UIViewController {
     
     func setupTempLabel() {
         view.addSubview(tempLabel)
-        tempLabel.text = "\(self.city.weather.temperature)°"
+        view.addSubview(tempSwitchButton)
+        
+        tempLabel.text = "\(self.city.weather.temperature)°C"
         tempLabel.font = UIFont.systemFont(ofSize: 35)
+        
+        tempSwitchButton.setImage(UIImage(systemName: "arrow.triangle.2.circlepath.circle"), for: .normal)
+        tempSwitchButton.addTarget(self, action: #selector(convertTemp), for: .touchUpInside)
         
         //constraints
         tempLabel.translatesAutoresizingMaskIntoConstraints = false
         tempLabel.topAnchor.constraint(equalTo: cityStackView.bottomAnchor, constant: 75).isActive = true
         tempLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+        tempSwitchButton.translatesAutoresizingMaskIntoConstraints = false
+        tempSwitchButton.leadingAnchor.constraint(equalTo: tempLabel.trailingAnchor, constant: 8).isActive = true
+        tempSwitchButton.centerYAnchor.constraint(equalTo: tempLabel.centerYAnchor).isActive = true
         
     }
     
@@ -225,6 +238,9 @@ class CityViewController: UIViewController {
         
         windkphLabel.topAnchor.constraint(equalTo: timeLabel.bottomAnchor,constant: 10).isActive = true
         
+        weatherStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8).isActive = true
+        weatherStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8).isActive = true
+        
     }
     
     @objc func favoriteButtonTapped() {
@@ -240,6 +256,26 @@ class CityViewController: UIViewController {
             delegate?.updateCities(cities)
             favoriteButton.setImage(UIImage(systemName: "star.fill"), for: .normal)
             }
+        }
+    }
+    
+    @objc func convertTemp() {
+        if tempInCelcius {
+            if let tempCelcius = Float(tempLabel.text!.replacingOccurrences(of: "°C", with: "")) {
+                let tempFahrenheit = Float(tempCelcius*1.8 + 32).rounded()
+                tempLabel.text = "\(tempFahrenheit)°F"
+            }
+            
+            tempInCelcius = false
+            tempSwitchButton.setImage(UIImage(systemName: "arrow.triangle.2.circlepath.circle.fill"), for: .normal)
+        } else {
+            if let tempFahrenheit = Float(tempLabel.text!.replacingOccurrences(of: "°F", with: "")) {
+                let tempCelcius = Float((tempFahrenheit - 32) / 1.8).rounded()
+                tempLabel.text = "\(tempCelcius)°C"
+            }
+            
+            tempInCelcius = true
+            tempSwitchButton.setImage(UIImage(systemName: "arrow.triangle.2.circlepath.circle"), for: .normal)
         }
     }
     
