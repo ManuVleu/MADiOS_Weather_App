@@ -99,6 +99,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.modalPresentationStyle = .overFullScreen
+        NotificationCenter.default.addObserver(self, selector: #selector(deviceDidRotate), name: UIDevice.orientationDidChangeNotification, object: nil)
         
         locationManager.delegate = self
         
@@ -145,28 +146,15 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
         updateUI()
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        
-        if traitCollection.horizontalSizeClass == .compact {
-            print("compact")
-        } else if traitCollection.horizontalSizeClass == .regular {
-            print("regular")
-        } else {
-            print("big")
-        }
-    }
-    
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         
         if traitCollection.horizontalSizeClass == .compact {
-            print("trans compact")
+            //print("trans compact")
         } else if traitCollection.horizontalSizeClass == .regular {
-            print("trans regular")
-            searchBarContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 100).isActive = true
+            //print("trans regular")
         } else {
-            print("trans big")
+            //print("trans big")
         }
     }
     
@@ -391,6 +379,16 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
         self.cities.remove(at: sender.tag)
         stackView.removeArrangedSubview(sender.superview!)
         sender.superview?.removeFromSuperview()
+    }
+    
+    @objc func deviceDidRotate() {
+        if UIDevice.current.orientation.isLandscape {
+            setBackground()
+            setBackground()
+        } else {
+            setBackground()
+            setBackground()
+        }
     }
     
     func showErrorMessage(message: String) {

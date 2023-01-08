@@ -23,6 +23,8 @@ class CityViewController: UIViewController {
     var city: City
     var cities: [City]
     
+    let gradientLayer = CAGradientLayer()
+    
     let favoriteButton = UIButton()
     
     let cityStackView = UIStackView()
@@ -57,6 +59,8 @@ class CityViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(deviceDidRotate), name: UIDevice.orientationDidChangeNotification, object: nil)
+        
         setupGradientBackground()
         
         title = city.name
@@ -87,7 +91,7 @@ class CityViewController: UIViewController {
     }
     
     func setupGradientBackground() {
-        let gradientLayer = CAGradientLayer()
+        
         gradientLayer.locations = [0,1]
         gradientLayer.frame = view.bounds
         
@@ -256,6 +260,16 @@ class CityViewController: UIViewController {
             delegate?.updateCities(cities)
             favoriteButton.setImage(UIImage(systemName: "star.fill"), for: .normal)
             }
+        }
+    }
+    
+    @objc func deviceDidRotate() {
+        if UIDevice.current.orientation.isLandscape {
+            gradientLayer.locations = [0,1]
+            gradientLayer.frame = view.bounds
+        } else {
+            gradientLayer.locations = [0,1]
+            gradientLayer.frame = view.bounds
         }
     }
     
