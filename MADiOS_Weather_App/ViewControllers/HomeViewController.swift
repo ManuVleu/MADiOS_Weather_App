@@ -23,13 +23,11 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
                 cityVC.delegate = self
                 // self.cities.append(city)
                 DispatchQueue.main.async {
-                    self.errorLabel.isHidden = true
                     self.navigationController?.pushViewController(cityVC, animated: true)
                 }
             } else {
                 DispatchQueue.main.async {
-                    self.errorLabel.isHidden = false
-                    self.errorLabel.text = "No city found with that name"
+                    self.showErrorMessage(message: "No city found with that name")
                 }
             }
         }
@@ -87,7 +85,6 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
     }
     
     let welcomeLabel = UILabel()
-    let errorLabel = UILabel()
     let weatherStackView = UIStackView()
     let conditionIcon = UIImageView()
     let conditionLabel = UILabel()
@@ -121,9 +118,6 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
         //welcomeLabel that adapts to the time of day
         setupWelcomeLabel()
         
-        // Error label for searchBar
-        setupErrorLabel()
-        
         //searchBar voor cities
         setupSearchBar()
         
@@ -148,7 +142,6 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
     }
     
     func updateUI() {
-        self.errorLabel.isHidden = true
         self.updateStackView()
     }
     
@@ -184,18 +177,6 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
         
     }
     
-    func setupErrorLabel() {
-        view.addSubview(errorLabel)
-        errorLabel.text = ""
-        errorLabel.textColor = .red
-        errorLabel.translatesAutoresizingMaskIntoConstraints = false
-        errorLabel.leadingAnchor.constraint(equalTo: welcomeLabel.leadingAnchor).isActive = true
-        errorLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 8).isActive = true
-        errorLabel.widthAnchor.constraint(equalTo: welcomeLabel.widthAnchor).isActive = true
-        
-        errorLabel.isHidden = true
-    }
-    
     func setupStackView() {
         
         stackView.axis = .vertical
@@ -220,15 +201,13 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
         scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
         scrollView.addSubview(welcomeLabel)
-        scrollView.addSubview(errorLabel)
         scrollView.addSubview(weatherStackView)
         scrollView.addSubview(locatiesLabel)
         scrollView.addSubview(searchBarContainer)
         scrollView.addSubview(stackView)
         
         welcomeLabel.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
-        errorLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor).isActive = true
-        weatherStackView.topAnchor.constraint(equalTo: errorLabel.bottomAnchor).isActive = true
+        weatherStackView.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor).isActive = true
         locatiesLabel.topAnchor.constraint(equalTo: weatherStackView.bottomAnchor).isActive = true
         searchBarContainer.topAnchor.constraint(equalTo: locatiesLabel.bottomAnchor).isActive = true
         stackView.topAnchor.constraint(equalTo: searchBarContainer.bottomAnchor).isActive = true
@@ -284,8 +263,9 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
         conditionLabel.translatesAutoresizingMaskIntoConstraints = false
         tempLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        weatherStackView.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 12).isActive = true
         weatherStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        weatherStackView.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor).isActive = true
+        //weatherStackView.bottomAnchor.constraint(equalTo: locatiesLabel.topAnchor).isActive = true
 
     }
     
@@ -294,7 +274,7 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
         locatiesLabel.text = "Jouw locaties"
         locatiesLabel.translatesAutoresizingMaskIntoConstraints = false
         locatiesLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8).isActive = true
-        locatiesLabel.topAnchor.constraint(equalTo: searchBarContainer.bottomAnchor, constant: 40).isActive = true
+        locatiesLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 64).isActive = true
         
         let lineView = UIView()
         view.addSubview(lineView)
@@ -385,6 +365,13 @@ class HomeViewController: UIViewController, CLLocationManagerDelegate, UISearchB
         self.cities.remove(at: sender.tag)
         stackView.removeArrangedSubview(sender.superview!)
         sender.superview?.removeFromSuperview()
+    }
+    
+    func showErrorMessage(message: String) {
+        let alertController = UIAlertController(title: "Error",message: message,preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK",style: .default,handler: nil)
+        alertController.addAction(action)
+        present(alertController,animated: true,completion: nil)
     }
     
     func color(fromHexString hexString: String) -> UIColor? {

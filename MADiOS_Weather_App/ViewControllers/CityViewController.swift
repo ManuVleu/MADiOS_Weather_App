@@ -233,8 +233,8 @@ class CityViewController: UIViewController {
             delegate?.updateCities(cities)
             favoriteButton.setImage(UIImage(systemName: "star"), for: .normal)
         } else {
-            if self.cities.count >= 2 {
-                showErrorMessage(message: "To many favorite cities")
+            if self.cities.count >= 8 {
+                showErrorMessage(message: "Can't add city. Too many favorite cities")
             }else{
             cities.append(city)
             delegate?.updateCities(cities)
